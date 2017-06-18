@@ -1,4 +1,4 @@
-# EvadeGameDesktop
+# RealisticGame
 
 A Desktop Implementation of a small, original 2d game.
 
