@@ -93,7 +93,7 @@ public class Player extends MovingAnimationObject {
 		super.move(ticksPerSecond);
 		Weapon curWeap = getCurrentWeapon();
 		if(curWeap instanceof AnimatedCloseCombatWeapon)
-			((AnimatedCloseCombatWeapon) curWeap).stepAnimation();
+			((AnimatedCloseCombatWeapon) curWeap).stepAnimation(ticksPerSecond);
 		setF_X(getF_X()-additioFX);
 		setF_Y(getF_Y()-additioFY);
 	}

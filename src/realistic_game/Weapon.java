@@ -25,7 +25,7 @@ public abstract class Weapon extends AnimationObject {
 	public abstract double getDelay();
 	public abstract double getBlowbackMultipler();
 	public abstract void updatePosition();
-	public void intersectsWith(@SuppressWarnings("unused") AnimationObject p){}
+	public void intersectsWith(AnimationObject p){}
 	@Override public boolean equals(Object o) {
 		if(o instanceof Weapon) {
 			Weapon wo=(Weapon)o;

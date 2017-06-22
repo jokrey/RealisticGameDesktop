@@ -205,13 +205,13 @@ public class Realistic_Game_Engine extends AnimationEngine {
     				if(player.getV_X()<0)	player.setF_X(99);
     				if(player.getV_X()>0)	player.setF_X(-99);
             	} else {
-            		player.setV_X(player.getV_X() + (player.additioFX*(1.0/AnimationEngine.getTicksPerSecond())));
+            		player.setV_X(player.getV_X() + (player.additioFX*(1.0/getTicksPerSecond())));
             		player.additioFX=0;
             	}
 
                 ArrayList<AnimationObject> collidesWith = AnimationObject.collidesWith(player, mapParticles);
                 for(AnimationObject p:collidesWith)
-                	player.setLifePs(player.getLifePs() - ((MapParticle)p).damagePerSecond*(1.0/AnimationEngine.getTicksPerSecond()));
+                	player.setLifePs(player.getLifePs() - ((MapParticle)p).damagePerSecond*(1.0/getTicksPerSecond()));
 
                 player.controlUnit_compute();
                 player.move(getTicksPerSecond());

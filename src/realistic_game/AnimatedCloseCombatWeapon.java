@@ -28,9 +28,9 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
 		}
 	}
 	public boolean isAttacking() {return curPosInAnimation>0;}
-	void stepAnimation() {
+	void stepAnimation(int ticksPerSecond) {
 		if(isAttacking())
-			curPosInAnimation+=(getAnimSpeed()*(1.0/AnimationEngine.getTicksPerSecond()));
+			curPosInAnimation+=(getAnimSpeed()*(1.0/ticksPerSecond));
 		if(curPosInAnimation>100)
 			curPosInAnimation=0;
 	}
