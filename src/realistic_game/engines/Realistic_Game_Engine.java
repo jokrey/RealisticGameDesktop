@@ -7,6 +7,7 @@ import realistic_game.control_units.ControlUnit_Human;
 import util.UTIL;
 import util.animation.engine.AnimationEngine;
 import util.animation.engine.LimitRangeMovingAnimationObject;
+import util.animation.engine.TickEngine;
 import util.animation.pipeline.AnimationObject;
 import util.animation.util.AEColor;
 import util.animation.util.AEPoint;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Realistic_Game_Engine extends AnimationEngine {
+public class Realistic_Game_Engine extends TickEngine {
 	private Realistic_Game realisticGame;
 	public Realistic_Game_Engine(Realistic_Game realisticGame_g) {
 		realisticGame=realisticGame_g;
