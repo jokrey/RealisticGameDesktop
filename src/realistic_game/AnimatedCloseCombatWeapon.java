@@ -1,7 +1,6 @@
 package realistic_game;
 
 import util.UTIL;
-import util.animation.engine.AnimationEngine;
 import util.animation.pipeline.AnimationObject;
 import util.animation.pipeline.AnimationPipeline;
 import util.animation.util.AEColor;
