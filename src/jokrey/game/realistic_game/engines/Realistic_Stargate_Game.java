@@ -2,8 +2,6 @@ package jokrey.game.realistic_game.engines;
 
 import jokrey.game.realistic_game.*;
 import jokrey.game.realistic_game.care_package.*;
-import realistic_game.*;
-import realistic_game.care_package.*;
 import util.ObjectWithProbability;
 import util.UTIL;
 import jokrey.utilities.animation.pipeline.AnimationObject;
