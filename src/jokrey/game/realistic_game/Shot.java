@@ -11,14 +11,18 @@ import jokrey.utilities.animation.util.AESize;
 import java.util.List;
 
 public class Shot extends MovingAnimationObject {
-	double damage;
-	double blowbackMultipler;
+	public final Player shooter;
+	public final double damage;
+	final double blowbackMultipler;
 	public Shot(AEPoint p, double vX, double fY, double width, double height,
-			AEColor c, double damage_g, double blowbackMultipler_g) {
+			AEColor c, double damage_g, double blowbackMultipler_g, Player shooter) {
 		super(0, 0, vX, 0, 0, fY, width, height, OVAL, c);
 		damage=damage_g;
 		blowbackMultipler=blowbackMultipler_g;
+		this.shooter=shooter;
 		setMid(p);
+		if(shooter==null)
+			Thread.dumpStack();
 	}
 	void startExplosion(List<LimitRangeMovingAnimationObject> particles) {
 		if(drawParam instanceof AEColor) {

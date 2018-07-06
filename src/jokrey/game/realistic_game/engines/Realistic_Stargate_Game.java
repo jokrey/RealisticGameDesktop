@@ -18,7 +18,7 @@ public class Realistic_Stargate_Game extends Realistic_Game {
     ArrayList<Stargate_Pair> gates = new ArrayList<>();
     @Override public void doAdditionalLogic(Realistic_Game_Engine engine) {
     	for(Stargate_Pair sgp:gates) {
-    		for(Player p:engine.players)
+    		for(Player p:engine.getAlivePlayers())
     			sgp.calculateTravelFor(p);
     		for(Shot s:engine.shots)
     			sgp.calculateTravelFor(s);
@@ -35,32 +35,33 @@ public class Realistic_Stargate_Game extends Realistic_Game {
 
     @Override public double getPackageSpawnDelay() {return 4;}
     @Override public void doPackageSpawn(List<CarePackage> packages, Realistic_Game_Engine engine) {
-		int whichPack = UTIL.getRandomNr(1, 4);
-		if(whichPack==1) {//package spawn
-			String ammoFor = ObjectWithProbability.getObjectWithProbability(
-					new ObjectWithProbability("PISTOL", 100/6),
-					new ObjectWithProbability("SMG", 100/6),
-					new ObjectWithProbability("RIFLE", 100/6),
-					new ObjectWithProbability("SNIPER", 100/6),
-					new ObjectWithProbability("SHOTGUN", 100/6),
-					new ObjectWithProbability("GRENADE", 100/6)
-				).toString();
-			int ammo = 0;
-			if(ammoFor.equals("SMG")) {
-				ammo=UTIL.getRandomNr(8, 28);
-			} else if(ammoFor.equals("RIFLE")) {
-				ammo=UTIL.getRandomNr(5, 15);
-			} else if(ammoFor.equals("SNIPER")) {
-				ammo=UTIL.getRandomNr(1, 5);
-			} else if(ammoFor.equals("PISTOL")) {
-				ammo=UTIL.getRandomNr(8, 28);
-			} else if(ammoFor.equals("SHOTGUN")) {
-				ammo=UTIL.getRandomNr(3, 8);
-			} else if(ammoFor.equals("GRENADE")) {
-				ammo=UTIL.getRandomNr(1, 4);
-			}
-			packages.add(new AmmoPackage(ammo, ammoFor, engine.getVirtualBoundaries()));
-		} else if(whichPack==2) {
+		int whichPack = UTIL.getRandomNr(2, 4);
+//		if(whichPack==1) {//package spawn
+//			String ammoFor = ObjectWithProbability.getObjectWithProbability(
+//					new ObjectWithProbability("PISTOL", 100/6),
+//					new ObjectWithProbability("SMG", 100/6),
+//					new ObjectWithProbability("RIFLE", 100/6),
+//					new ObjectWithProbability("SNIPER", 100/6),
+//					new ObjectWithProbability("SHOTGUN", 100/6),
+//					new ObjectWithProbability("GRENADE", 100/6)
+//				).toString();
+//			int ammo = 0;
+//			if(ammoFor.equals("SMG")) {
+//				ammo=UTIL.getRandomNr(8, 28);
+//			} else if(ammoFor.equals("RIFLE")) {
+//				ammo=UTIL.getRandomNr(5, 15);
+//			} else if(ammoFor.equals("SNIPER")) {
+//				ammo=UTIL.getRandomNr(1, 5);
+//			} else if(ammoFor.equals("PISTOL")) {
+//				ammo=UTIL.getRandomNr(8, 28);
+//			} else if(ammoFor.equals("SHOTGUN")) {
+//				ammo=UTIL.getRandomNr(3, 8);
+//			} else if(ammoFor.equals("GRENADE")) {
+//				ammo=UTIL.getRandomNr(1, 4);
+//			}
+//			packages.add(new AmmoPackage(ammo, ammoFor, engine.getVirtualBoundaries()));
+//		} else
+		if(whichPack==2) {
 			packages.add(new HealthPackage(engine.getVirtualBoundaries()));
 		} else if(whichPack==3) {
 			int rand = UTIL.getRandomNr(1, 7);
@@ -81,7 +82,7 @@ public class Realistic_Stargate_Game extends Realistic_Game {
 				w = RangedWeapon.getWeapon_Grenade(engine.getVirtualBoundaries());
 			}
 			boolean allPlayersHaveWeapon = true;
-			for(Player p:engine.players)
+			for(Player p:engine.getAlivePlayers())
 				if(!p.weapons.contains(w))
 					allPlayersHaveWeapon = false;
 			if(!allPlayersHaveWeapon)

@@ -19,11 +19,10 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
 	}
 	double curPosInAnimation = 0;
 
-	double lastShot = System.nanoTime()/1e9;
 	void startAttack() {
-		if(!isAttacking() && System.nanoTime()/1e9-lastShot>getDelay()) {
+		if(!isAttacking() && !isInCooldown()) {
 			curPosInAnimation=0.00001;
-			lastShot=System.nanoTime()/1e9;
+			used();
 		}
 	}
 	public boolean isAttacking() {return curPosInAnimation>0;}

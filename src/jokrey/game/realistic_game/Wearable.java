@@ -29,7 +29,7 @@ public abstract class Wearable {
 //		type=type_g;
 //	}
 	abstract String getName();
-	abstract boolean allowNewWearable(Wearable newWear);
+	abstract boolean newWearableAddedRemoveThis(Wearable newWear);
 	void drawWearable(AnimationPipeline pipe) {
 		AERect toDrawAt = pipe.getDrawBoundsFor(getWearer());
 		drawWearable(pipe, toDrawAt.x,toDrawAt.y,toDrawAt.getWidth(),toDrawAt.getHeight());
@@ -42,7 +42,6 @@ public abstract class Wearable {
 	boolean upAction(){return false;}
 	boolean leftAction(){return false;}
 	boolean rightAction(){return false;}
-	@SuppressWarnings("unused")
 	boolean gotHitAction(Shot s, ArrayList<LimitRangeMovingAnimationObject> particles){return false;}
 
 
@@ -52,20 +51,16 @@ public abstract class Wearable {
 			@Override String getName() {
 				return "VEST";
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
-	    		if(newWear.getName().equals(getName())) {
-	    			bulletProtectionPercent = 100;
-	        		return false;
-	    		} else
-	    			return true;
-	    	}
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
+				return newWear.getName().equals(getName());//if the new thing is also a vest then this one can be discarded
+			}
 
-	    	double bulletProtectionPercent = 100;
+	    	private double bulletProtectionPercent = 100;
 	    	@Override boolean gotHitAction(Shot shot, ArrayList<LimitRangeMovingAnimationObject> particles) {
 	    		getWearer().setLifePs(getWearer().getLifePs() - (shot.damage - shot.damage * (bulletProtectionPercent/100)));
 	    		bulletProtectionPercent-=shot.damage;
 				shot.startExplosion(particles);
-				getWearer().setV_X(getWearer().getV_X() + (shot.getV_X()<0?-Math.abs(shot.getV_X())*shot.blowbackMultipler:Math.abs(shot.getV_X())*shot.blowbackMultipler) / 2);
+				getWearer().setV_X(getWearer().getV_X() + (shot.getV_X()*shot.blowbackMultipler/10));
 				return true;
 	    	}
 	    	@Override boolean imDeadPleaseKillMe() {
@@ -81,9 +76,9 @@ public abstract class Wearable {
 			@Override String getName() {
 				return "DOUBLE_JUMP";
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
-                return !newWear.getName().equals(getName());
-	    	}
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
+			    return newWear.getName().equals("DOUBLE_JUMP") || newWear.getName().equals("SPEED_BOOST") || newWear.getName().equals("JET_PACK");
+            }
 
 	    	boolean allreadyDoubleJumped=false;
 	    	@Override boolean upAction() {
@@ -102,7 +97,7 @@ public abstract class Wearable {
 	    	@Override boolean imDeadPleaseKillMe() {return false;}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
 //				g.setColor(getWearer()==null?Color.gray:((Color) getWearer().drawParam).darker());
-				pipe.getDrawer().fillHalfOval(AEColor.LIGHT_GRAY, new AERect(x, y+(h-h*0.32), w, h*0.3), 0);
+				pipe.getDrawer().fillHalfOval(AEColor.RED, new AERect(x, y+(h-h*0.32), w, h*0.3), 0);
 			}
 		};
 	}
@@ -111,8 +106,8 @@ public abstract class Wearable {
 			@Override String getName() {
 				return "SPEED_BOOST";
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
-                return !newWear.getName().equals(getName());
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
+                return newWear.getName().equals("DOUBLE_JUMP") || newWear.getName().equals("SPEED_BOOST") || newWear.getName().equals("JET_PACK");
 	    	}
 
 	    	@Override boolean upAction() {
@@ -125,22 +120,22 @@ public abstract class Wearable {
 	    	}
 	    	@Override boolean leftAction() {
 	    		getWearer().lookingLeft = true;
-	    		getWearer().setV_X(getWearer().getV_X()-(getWearer().getStdHorizontailSpeedChange()*1.6));
-	    		if(getWearer().getV_X()<=-getWearer().getStdHorizontailSpeedMax()*1.6)
-	    			getWearer().setV_X(-getWearer().getStdHorizontailSpeedMax()*1.6);
+	    		getWearer().setV_X(getWearer().getV_X()-(getWearer().getStdHorizontalSpeedChange()*1.6));
+	    		if(getWearer().getV_X()<=-getWearer().getStdHorizontalSpeedMax()*1.6)
+	    			getWearer().setV_X(-getWearer().getStdHorizontalSpeedMax()*1.6);
 	    		return true;
 	    	}
 	    	@Override boolean rightAction() {
 	    		getWearer().lookingLeft = false;
-	    		getWearer().setV_X(getWearer().getV_X()+(getWearer().getStdHorizontailSpeedChange()*1.6));
-	    		if(getWearer().getV_X()>=getWearer().getStdHorizontailSpeedMax()*1.6)
-	    			getWearer().setV_X(getWearer().getStdHorizontailSpeedMax()*1.6);
+	    		getWearer().setV_X(getWearer().getV_X()+(getWearer().getStdHorizontalSpeedChange()*1.6));
+	    		if(getWearer().getV_X()>=getWearer().getStdHorizontalSpeedMax()*1.6)
+	    			getWearer().setV_X(getWearer().getStdHorizontalSpeedMax()*1.6);
 	    		return true;
 	    	}
 	    	@Override boolean imDeadPleaseKillMe() {return false;}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
 //				g.setColor(getWearer()==null?Color.gray:((Color) getWearer().drawParam).brighter());
-				pipe.getDrawer().fillHalfOval(AEColor.GRAY, new AERect(x, y+(h-h*0.32), w, h*0.3), 0);
+				pipe.getDrawer().fillHalfOval(AEColor.CYAN, new AERect(x, y+(h-h*0.32), w, h*0.3), 0);
 			}
 		};
 	}
@@ -149,12 +144,8 @@ public abstract class Wearable {
 			@Override String getName() {
 				return "JET_PACK";
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
-	    		if(newWear.getName().equals(getName())) {
-	    			fuel+=100;
-	        		return false;
-	    		} else
-	    			return true;
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
+                return newWear.getName().equals("DOUBLE_JUMP") || newWear.getName().equals("SPEED_BOOST") || newWear.getName().equals("JET_PACK");
 	    	}
 
 	    	int fuel=100;
@@ -187,28 +178,27 @@ public abstract class Wearable {
 			@Override String getName() {
 				return "ZATTED";
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
 	    		if(newWear.getName().equals(getName())) {
 	    			if(getWearer().getLifePs()>33)getWearer().setLifePs(33);
 	    			else getWearer().setLifePs(-1);
-					activatedAt=System.nanoTime()/1e9;
-	        		return false;
+	        		return true;
 	    		} else
-	    			return true;
+	    			return false;
 	    	}
 	    	@Override boolean imDeadPleaseKillMe() {
 	    		return getSecondsSinceActivation()>8;
 	    	}
 	    	@Override boolean leftAction() {
-	    		getWearer().setV_X(getWearer().getV_X()-(getWearer().getStdHorizontailSpeedChange()/3));
-	    		if(getWearer().getV_X()<=-getWearer().getStdHorizontailSpeedMax()/2)
-	    			getWearer().setV_X(-getWearer().getStdHorizontailSpeedMax()/2);
+	    		getWearer().setV_X(getWearer().getV_X()-(getWearer().getStdHorizontalSpeedChange()/3));
+	    		if(getWearer().getV_X()<=-getWearer().getStdHorizontalSpeedMax()/2)
+	    			getWearer().setV_X(-getWearer().getStdHorizontalSpeedMax()/2);
 	    		return true;
 	    	}
 	    	@Override boolean rightAction() {
-	    		getWearer().setV_X(getWearer().getV_X()+(getWearer().getStdHorizontailSpeedChange()/3));
-	    		if(getWearer().getV_X()>=getWearer().getStdHorizontailSpeedMax()/2)
-	    			getWearer().setV_X(getWearer().getStdHorizontailSpeedMax()/2);
+	    		getWearer().setV_X(getWearer().getV_X()+(getWearer().getStdHorizontalSpeedChange()/3));
+	    		if(getWearer().getV_X()>=getWearer().getStdHorizontalSpeedMax()/2)
+	    			getWearer().setV_X(getWearer().getStdHorizontalSpeedMax()/2);
 	    		return true;
 	    	}
 	    	@Override boolean upAction() {
@@ -218,7 +208,7 @@ public abstract class Wearable {
 	    		return true;
 	    	}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
-				for(int i=0;i<2;i++)//called so often it looks like more
+				for(int i=0;i<2;i++)//called so often it looks like much more
 					pipe.getDrawer().fillOval(AEColor.CYAN, new AERect(UTIL.getRandomNr(x-4, x+w+4), UTIL.getRandomNr(y-4, y+h+4), 4, 4));
 			}
 		};
@@ -228,12 +218,8 @@ public abstract class Wearable {
 			@Override String getName() {
 				return "FORCE_LIGHTENING";
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
-	    		if(newWear.getName().equals(getName())) {
-					activatedAt=System.nanoTime()/1e9;
-	        		return false;
-	    		} else
-	    			return true;
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
+	        	return newWear.getName().equals(getName()); //new force lightning effect, so one can be discarded
 	    	}
 	    	@Override boolean imDeadPleaseKillMe() {
 	    		if(Math.rint(getSecondsSinceActivation()*10)%2==0)//relativly random
@@ -241,8 +227,8 @@ public abstract class Wearable {
 	    		return getSecondsSinceActivation()>2.5;
 	    	}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
-				for(int i=0;i<2;i++)//called so often it looks like more
-					pipe.getDrawer().fillOval(AEColor.CYAN, new AERect(UTIL.getRandomNr(x-4, x+w+4), UTIL.getRandomNr(y-4, y+h+4), 2, 2));
+				for(int i=0;i<2;i++)//called so often it looks like much more
+					pipe.getDrawer().fillOval(new AEColor(0,0,255), new AERect(UTIL.getRandomNr(x-4, x+w+4), UTIL.getRandomNr(y-4, y+h+4), 2, 2));
 			}
 		};
 	}
@@ -260,12 +246,8 @@ public abstract class Wearable {
 				disposeAfter-=0.1111;
 				return false;
 			}
-			@Override boolean allowNewWearable(Wearable newWear){
-	    		if(newWear.getName().equals(getName())) {
-					activatedAt=System.nanoTime()/1e9;
-	        		return false;
-	    		} else
-	    			return true;
+			@Override boolean newWearableAddedRemoveThis(Wearable newWear){
+			    return newWear.getName().equals(getName());
 	    	}
 	    	@Override boolean imDeadPleaseKillMe() {
 	    		if(Math.rint(getSecondsSinceActivation()*10)%2==0)//relativly random

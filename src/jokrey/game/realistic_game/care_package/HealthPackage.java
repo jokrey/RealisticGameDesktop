@@ -1,5 +1,6 @@
 package jokrey.game.realistic_game.care_package;
 
+import jokrey.game.realistic_game.Player;
 import util.UTIL;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObjectDrawer;
@@ -9,7 +10,7 @@ import jokrey.utilities.animation.util.AERect;
 import jokrey.utilities.animation.util.AESize;
 
 public class HealthPackage extends CarePackage {
-	int health = 10;
+	private int health = 10;
 	public int getHealth() {return health;}
 	public HealthPackage(AESize frameSize) {
 		super(UTIL.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), 1, 0, 0, 0, 44, (int)frameSize.getHeight()/22, (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
@@ -32,5 +33,10 @@ public class HealthPackage extends CarePackage {
 				pipe.getDrawer().fillTriangle(AEColor.RED.brighter(), new AERect(x,y,w,h));//TODO
 			}
 		};
+	}
+
+	@Override public boolean onIntersectionWithPlayer(Player player) {
+		player.setLifePs(player.getLifePs() + getHealth());
+		return true;
 	}
 }

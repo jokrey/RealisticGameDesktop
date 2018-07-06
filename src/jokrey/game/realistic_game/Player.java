@@ -1,6 +1,8 @@
 package jokrey.game.realistic_game;
 
+import jokrey.game.realistic_game.care_package.WeaponPackage;
 import jokrey.game.realistic_game.control_units.PlayerControlUnit;
+import jokrey.game.realistic_game.engines.PlayerStats;
 import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import util.UTIL;
 import jokrey.utilities.animation.engine.MovingAnimationObject;
@@ -17,6 +19,7 @@ import java.util.Iterator;
 
 public class Player extends MovingAnimationObject {
 	public Realistic_Game_Engine engine;
+	public final PlayerStats stats = new PlayerStats();
 	public static AESize getStdSize(AESize frameSize) {
 		return new AESize((frameSize.getHeight()*0.06)/5, frameSize.getHeight()*0.06);
 	}
@@ -29,36 +32,34 @@ public class Player extends MovingAnimationObject {
 	public Weapon getCurrentWeapon() {
 		if(curWeapon>=0&&curWeapon<weapons.size()) {
 			return weapons.get(curWeapon);
-		}
+		} else if(!weapons.isEmpty()) {
+            curWeapon=0;
+            return getCurrentWeapon();
+        }
 		return null;
 	}
-	ArrayList<Wearable> wearables = new ArrayList<>();
+	public final ArrayList<Wearable> wearables = new ArrayList<>();
 	public void addWearable(Wearable newWear) {
 		newWear.setWearer(this);
-		Iterator<Wearable> wear_iter = wearables.iterator();
-		while(wear_iter.hasNext()) {
-			Wearable wear=wear_iter.next();
-			if(!wear.allowNewWearable(newWear)) {
-				wear_iter.remove();
-			}
-		}
+        wearables.removeIf(wear -> wear.newWearableAddedRemoveThis(newWear));
 		wearables.add(newWear);
 	}
-	private double lifePs=100; public double getLifePs() { return lifePs; }
+	private double lifePs=Integer.MIN_VALUE; public double getLifePs() { return lifePs; }
 	public void setLifePs(double d) {
 		lifePs = d;
 	}
 	public boolean lookingLeft = false; public boolean isLookingLeft() { return lookingLeft; }
     public double additioFX = 0;
     public double additioFY = 0;
-	public Player(double x, double y, int w, int h, final AEColor c, Realistic_Game_Engine engine_g) {
-		super(x, y, 0, 0, 0, 0, w, h, OVAL, null);
-		playerColor=c;
+	public Player(int w, int h, Realistic_Game_Engine engine_g) {
+		super(0, 0, 0, 0, 0, 0, w, h, OVAL, null);
 		drawParam=new StandardAODrawer() {
 			@Override public void draw(AnimationObject o, AnimationPipeline pipe, Object drawParam_g) {
-				super.draw(o, pipe, c);
+				super.draw(o, pipe, playerColor);
 				AERect toDrawAt = pipe.getDrawBoundsFor(o);
+				//draw the eye
 				pipe.getDrawer().fillOval(AEColor.BLACK, new AERect((toDrawAt.getX()+toDrawAt.getWidth()*(isLookingLeft()?0.25:0.75)) - Math.max(toDrawAt.getWidth()/2,2)/2, (toDrawAt.getY()+toDrawAt.getHeight()*0.25) - Math.max(toDrawAt.getWidth()/2,2)/2, Math.max(toDrawAt.getWidth()/2,2), Math.max(toDrawAt.getWidth()/2,2)));
+				//draw the life line
 				pipe.getDrawer().drawLine(AEColor.RED.brighter(), new AEPoint(toDrawAt.getX()+toDrawAt.getWidth()/2, toDrawAt.getY()), new AEPoint(toDrawAt.getX()+toDrawAt.getWidth()/2, toDrawAt.getY()+ toDrawAt.getHeight()*getLifePs()/100));
 				Weapon curWeap = getCurrentWeapon();
 				if(curWeap!=null) {
@@ -78,12 +79,14 @@ public class Player extends MovingAnimationObject {
 		};
 		engine=engine_g;
 		setF_Y(getStdGravitation());
-//		weapons.add(getWeapon_ZAT_NIK_TEL());
-//		addWearable(new ProtectiveVest());
-//		weapons.add(AnimatedCloseCombatWeapon.getKnife());
-//		weapons.add(RangedWeapon.getWeapon_PISTOL(engine.getFrameSize().getSize()));
 	}
-	private AEColor playerColor;
+	private AEColor playerColor=null;
+	public void setPlayerColor(AEColor color) {
+		if(playerColor==null)
+			playerColor=color;
+		else
+		    throw new IllegalStateException("cannot be done twice");
+	}
 	public AEColor getPlayerColor() {
 		return playerColor;
 	}
@@ -117,26 +120,51 @@ public class Player extends MovingAnimationObject {
 	private void performLeftAction() {
 		lookingLeft = true;
 		for(Wearable w:wearables)if(w.leftAction())return;
-		if(getV_X()>-getStdHorizontailSpeedMax())
-			setV_X(getV_X()-getStdHorizontailSpeedChange());
-//			setV_X(-getStdHorizontailSpeedMax());
+		if(getV_X()>-getStdHorizontalSpeedMax())
+			setV_X(getV_X()- getStdHorizontalSpeedChange());
 	}
 	private void performRightAction() {
 		lookingLeft = false;
 		for(Wearable w:wearables)if(w.rightAction())return;
-		if(getV_X()<getStdHorizontailSpeedMax())
-			setV_X(getV_X()+getStdHorizontailSpeedChange());
-//			setV_X(getStdHorizontailSpeedMax());
+		if(getV_X()< getStdHorizontalSpeedMax())
+			setV_X(getV_X()+ getStdHorizontalSpeedChange());
 	}
-	public final double getStdHorizontailSpeedChange() {return engine.getLimitPerc_H(3.7);}
-	public final double getStdHorizontailSpeedMax() {return engine.getLimitPerc_H(3.7)*5;}
+	public final double getStdHorizontalSpeedChange() {return engine.getLimitPerc_H(4);}
+	public final double getStdHorizontalSpeedMax() {return engine.getLimitPerc_H(4)*5;}
 	private void performAttackAction() {
-//	    draw(g);//to update the weapon location
-	    getCurrentWeapon().updatePosition();
+		Weapon curWeap = getCurrentWeapon();
+	    if(curWeap!=null)
+	    	curWeap.updatePosition();
 		for(Wearable w:wearables)if(w.attackAction())return;
 		attack();
 	}
-	public void gotHit(Shot shot) {
+
+
+    private void performDiscardAction() {
+	    throwAwayWeapon(getCurrentWeapon());
+    }
+
+    public void throwAwayWeapon(Weapon weapon) {
+        if(!weapons.isEmpty() && weapons.remove(weapon)) {
+            WeaponPackage pack = new WeaponPackage(weapon, engine.getVirtualBoundaries());
+            pack.w.weaponHolder=null;
+            engine.packages.add(pack);
+            pack.setY(getY());
+            pack.setV_Y(-getStdHorizontalSpeedMax()*2);
+            pack.setF_Y(getStdGravitation());
+            if(isLookingLeft()) {
+                pack.setX(getX()-pack.getW()*1.1);
+                pack.setV_X(-getStdHorizontalSpeedMax()/2 + getV_X());
+            } else {
+                pack.setX(getX()+getW()+pack.getW()*0.1);
+                pack.setV_X(getStdHorizontalSpeedMax()/2 + getV_X());
+            }
+            switchToNextWeapon();
+        }
+    }
+
+
+    public void gotHit(Shot shot) {
 		for(Wearable w:wearables)if(w.gotHitAction(shot, engine.particles))return;
 		lifePs = getLifePs() - shot.damage;
 		shot.startExplosion(engine.particles);
@@ -146,26 +174,26 @@ public class Player extends MovingAnimationObject {
 
 	public PlayerControlUnit controlUnit;
 	public void controlUnit_compute() {
-        if(controlUnit.canCalculateNewActions()) {
-        	controlUnit.calculateNewActions();
-    		if(controlUnit.isUpAction())
-    			performUpAction();
-    		if(controlUnit.isLeftAction())
-    			performLeftAction();
-    		if(controlUnit.isRightAction())
-    			performRightAction();
-    		if(controlUnit.isAttackAction())	
-    			performAttackAction();
-    		if(controlUnit.isSwitchAction())
-    			switchToNextWeapon();
+		if(controlUnit.calculateNewActions(this, engine)) {
+            if (controlUnit.isUpAction())
+                performUpAction();
+            if (controlUnit.isLeftAction())
+                performLeftAction();
+            if (controlUnit.isRightAction())
+                performRightAction();
+            if (controlUnit.isAttackAction())
+                performAttackAction();
+            if (controlUnit.isSwitchAction())
+                switchToNextWeapon();
+            if (controlUnit.isDiscardAction()) {
+                performDiscardAction();
+            }
         }
 	}
 
 
 
-
-
-	public boolean computeStops(ArrayList<? extends MovingAnimationObject> mapParticles) {
+    public void computeStops(ArrayList<? extends MovingAnimationObject> mapParticles) {
         for(MovingAnimationObject mr:mapParticles) {
     		if(!(mr instanceof MapParticle && !((MapParticle)mr).isSolid) && getBounds().intersects(mr.getBounds())) {
     			double leftOverlap=getX()+getW()-mr.getX();
@@ -220,6 +248,5 @@ public class Player extends MovingAnimationObject {
     			setY(getY()+shiftY);
     		}
         }
-        return true;
-	}
+    }
 }

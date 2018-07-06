@@ -1,6 +1,7 @@
 package jokrey.game.realistic_game.control_units;
 
 import jokrey.game.realistic_game.Player;
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 
 public class ControlUnit_Human extends PlayerControlUnit {
 	private final char keyChar_up;
@@ -8,19 +9,21 @@ public class ControlUnit_Human extends PlayerControlUnit {
 	private final char keyChar_right;
 	private final char keyChar_attack;
 	private final char keyChar_switchWeapon;
-	public ControlUnit_Human(Player p, char keyChar_up_g, char keyChar_left_g, char keyChar_right_g, char keyChar_attack_g, char keyChar_switchWeapon_g) {
-		super(p);
-		keyChar_up=keyChar_up_g;
-		keyChar_left=keyChar_left_g;
-		keyChar_right=keyChar_right_g;
-		keyChar_attack=keyChar_attack_g;
-		keyChar_switchWeapon=keyChar_switchWeapon_g;
+	private final char keyChar_discardWeapon;
+	public ControlUnit_Human(char up_key, char left_key, char right_key, char attack_key, char switchWeapon_key, char discardWeapon_key) {
+		keyChar_up=up_key;
+		keyChar_left=left_key;
+		keyChar_right=right_key;
+		keyChar_attack=attack_key;
+		keyChar_switchWeapon=switchWeapon_key;
+		keyChar_discardWeapon=discardWeapon_key;
 	}
-	@Override public void doCalculations() {
-	    if(getEngine().isKeyPressed(keyChar_up))			performUpAction=true;
-	    if(getEngine().isKeyPressed(keyChar_left))			performLeftAction=true;
-	    if(getEngine().isKeyPressed(keyChar_right))			performRightAction=true;
-	    if(getEngine().isKeyPressed(keyChar_attack))		performAttackAction=true;
-	    if(getEngine().isKeyPressed(keyChar_switchWeapon))	performSwitchWeaponAction=true;
+	@Override public void doCalculations(Player player, Realistic_Game_Engine engine) {
+	    if(engine.isKeyPressed(keyChar_up))			    performUpAction=true;
+	    if(engine.isKeyPressed(keyChar_left))			performLeftAction=true;
+	    if(engine.isKeyPressed(keyChar_right))			performRightAction=true;
+	    if(engine.isKeyPressed(keyChar_attack))		    performAttackAction=true;
+		if(engine.isKeyPressed(keyChar_switchWeapon))	performSwitchWeaponAction=true;
+		if(engine.isKeyPressed(keyChar_discardWeapon))	performDiscardWeaponAction=true;
 	}
 }

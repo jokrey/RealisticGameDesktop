@@ -18,7 +18,7 @@ public class Realistic_TrulyRandom_Game extends Realistic_Game {
     ArrayList<Stargate_Pair> gates = new ArrayList<>();
     @Override public void doAdditionalLogic(Realistic_Game_Engine engine) {
     	for(Stargate_Pair sgp:gates) {
-    		for(Player p:engine.players)
+    		for(Player p:engine.getAlivePlayers())
     			sgp.calculateTravelFor(p);
     		for(Shot s:engine.shots)
     			sgp.calculateTravelFor(s);
@@ -35,43 +35,44 @@ public class Realistic_TrulyRandom_Game extends Realistic_Game {
 
     @Override public double getPackageSpawnDelay() {return 2.6;}
     @Override public void doPackageSpawn(List<CarePackage> packages, Realistic_Game_Engine engine) {
-		int whichPack = UTIL.getRandomNr(1, 4);
-		if(whichPack==1) {//package spawn
-			String ammoFor = ObjectWithProbability.getObjectWithProbability(
-					new ObjectWithProbability("PISTOL", 100/8),
-					new ObjectWithProbability("SMG", 100/8),
-					new ObjectWithProbability("RIFLE", 100/8),
-					new ObjectWithProbability("SNIPER", 100/8),
-					new ObjectWithProbability("SHOTGUN", 100/8),
-					new ObjectWithProbability("GRENADE", 100/8),
-					new ObjectWithProbability("MINE", 100/8),
-					new ObjectWithProbability("FLAMETHROWER", 100/8)
-				).toString();
-			int ammo = 0;
-			if(ammoFor.equals("SMG")) {
-				ammo=UTIL.getRandomNr(8, 28);
-			} else if(ammoFor.equals("RIFLE")) {
-				ammo=UTIL.getRandomNr(5, 15);
-			} else if(ammoFor.equals("SNIPER")) {
-				ammo=UTIL.getRandomNr(1, 5);
-			} else if(ammoFor.equals("PISTOL")) {
-				ammo=UTIL.getRandomNr(8, 28);
-			} else if(ammoFor.equals("SHOTGUN")) {
-				ammo=UTIL.getRandomNr(3, 8);
-			} else if(ammoFor.equals("GRENADE")) {
-				ammo=UTIL.getRandomNr(1, 4);
-			} else if(ammoFor.equals("MINE")) {
-				ammo=UTIL.getRandomNr(1, 3);
-			} else if(ammoFor.equals("FLAMETHROWER")) {
-				ammo=UTIL.getRandomNr(50, 200);
-			}
-			packages.add(new AmmoPackage(ammo, ammoFor, engine.getVirtualBoundaries()));
-		} else if(whichPack==2) {
+		int whichPack = UTIL.getRandomNr(1, 6);
+//		if(whichPack==1) {//package spawn
+//			String ammoFor = ObjectWithProbability.getObjectWithProbability(
+//					new ObjectWithProbability("PISTOL", 100/8),
+//					new ObjectWithProbability("SMG", 100/8),
+//					new ObjectWithProbability("RIFLE", 100/8),
+//					new ObjectWithProbability("SNIPER", 100/8),
+//					new ObjectWithProbability("SHOTGUN", 100/8),
+//					new ObjectWithProbability("GRENADE", 100/8),
+//					new ObjectWithProbability("MINE", 100/8),
+//					new ObjectWithProbability("FLAMETHROWER", 100/8)
+//				).toString();
+//			int ammo = 0;
+//			if(ammoFor.equals("SMG")) {
+//				ammo=UTIL.getRandomNr(8, 28);
+//			} else if(ammoFor.equals("RIFLE")) {
+//				ammo=UTIL.getRandomNr(5, 15);
+//			} else if(ammoFor.equals("SNIPER")) {
+//				ammo=UTIL.getRandomNr(1, 5);
+//			} else if(ammoFor.equals("PISTOL")) {
+//				ammo=UTIL.getRandomNr(8, 28);
+//			} else if(ammoFor.equals("SHOTGUN")) {
+//				ammo=UTIL.getRandomNr(3, 8);
+//			} else if(ammoFor.equals("GRENADE")) {
+//				ammo=UTIL.getRandomNr(1, 4);
+//			} else if(ammoFor.equals("MINE")) {
+//				ammo=UTIL.getRandomNr(1, 3);
+//			} else if(ammoFor.equals("FLAMETHROWER")) {
+//				ammo=UTIL.getRandomNr(50, 200);
+//			}
+//			packages.add(new AmmoPackage(ammo, ammoFor, engine.getVirtualBoundaries()));
+//		} else
+		if(whichPack==2) {
 			packages.add(new HealthPackage(engine.getVirtualBoundaries()));
 		} else if(whichPack==3) {
 			Weapon w = Weapon.getWeaponRandom(engine.getVirtualBoundaries());
 			boolean allPlayersHaveWeapon = true;
-			for(Player p:engine.players)
+			for(Player p:engine.getAlivePlayers())
 				if(!p.weapons.contains(w))
 					allPlayersHaveWeapon = false;
 			if(!allPlayersHaveWeapon)
@@ -124,15 +125,15 @@ public class Realistic_TrulyRandom_Game extends Realistic_Game {
         	mapParticles.add(new MapParticle(engine.getLimitPerc_W(50) - engine.getLimitPerc_W(50)/2, engine.getLimitPerc_H(80) - engine.getLimitPerc_W(1)/2, 0, 0, 0, 0, engine.getLimitPerc_W(50), engine.getLimitPerc_W(1), AnimationObject.RECT, new AEColor(255,128,128,128)));
         	mapParticles.add(new MapParticle(engine.getLimitPerc_W(50) - engine.getLimitPerc_W(60)/2, engine.getLimitPerc_H(90) - engine.getLimitPerc_W(1)/2, 0, 0, 0, 0, engine.getLimitPerc_W(60), engine.getLimitPerc_W(1), AnimationObject.RECT, new AEColor(255,128,128,128)));
     	} else if(map==3) {
-//        	mapParticles.add(new MapParticle(engine.getWPerc(10)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(20)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(30)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(40)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(50)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(60)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(70)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(80)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(90)-engine.getWPerc(2), engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(10)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(20)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(30)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(40)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(50)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(60)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(70)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(80)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(90)-engine.getLimitPerc_W(2), engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
     	} else if(map==4) {
         	mapParticles.add(new MapParticle(engine.getLimitPerc_W(15	)-engine.getLimitPerc_W(10)/2, engine.getLimitPerc_H(10	), 0		, 0, 0, 0, engine.getLimitPerc_W(10), engine.getLimitPerc_W(10)/10, AnimationObject.RECT, new AEColor(255,255,255,255)));
         	mapParticles.add(new MapParticle(engine.getLimitPerc_W(50	)-engine.getLimitPerc_W(10)/2, engine.getLimitPerc_H(10	), 0		, 0, 0, 0, engine.getLimitPerc_W(10), engine.getLimitPerc_W(10)/10, AnimationObject.RECT, new AEColor(255,255,255,255)));
@@ -180,35 +181,35 @@ public class Realistic_TrulyRandom_Game extends Realistic_Game {
         			engine.getVirtualLimit_width() - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height())), 	engine.getLimitPerc_H(40) - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
         			Stargate.getStargateStdHeight(engine.getVirtualLimit_height()), new AEColor(255,0,0,255)));
     	} else if(map==6) {
-//        	mapParticles.add(new MapParticle(engine.getWPerc(10)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(20)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(30)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(40)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(50)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(60)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(70)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(80)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	mapParticles.add(new MapParticle(engine.getWPerc(90)-engine.getWPerc(2)/2, engine.getHPerc(85), 0, 0, 0, 0, engine.getWPerc(2), engine.getHPerc(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
-//        	gates.add(new Stargate_Pair(
-//        			engine.getWPerc(5) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			engine.getWPerc(95) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			Stargate.getStargateStdHeight(engine.getH()), new AEColor(255,0,0,255)));
-//        	gates.add(new Stargate_Pair(
-//        			engine.getWPerc(15) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			engine.getWPerc(85) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			Stargate.getStargateStdHeight(engine.getH()), new AEColor(255,255,0,0)));
-//        	gates.add(new Stargate_Pair(
-//        			engine.getWPerc(25) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			engine.getWPerc(75) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			Stargate.getStargateStdHeight(engine.getH()), Color.orange));
-//        	gates.add(new Stargate_Pair(
-//        			engine.getWPerc(35) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			engine.getWPerc(65) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			Stargate.getStargateStdHeight(engine.getH()), Color.yellow));
-//        	gates.add(new Stargate_Pair(
-//        			engine.getWPerc(45) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			engine.getWPerc(55) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getH()))/2, engine.getH() - Stargate.getStargateStdHeight(engine.getH()),
-//        			Stargate.getStargateStdHeight(engine.getH()), Color.green));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(10)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(20)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(30)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(40)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(50)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(60)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(70)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(80)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	mapParticles.add(new MapParticle(engine.getLimitPerc_W(90)-engine.getLimitPerc_W(2)/2, engine.getLimitPerc_H(85), 0, 0, 0, 0, engine.getLimitPerc_W(2), engine.getLimitPerc_H(15), AnimationObject.RECT, new AEColor(255,255,255,255)));
+        	gates.add(new Stargate_Pair(
+        			engine.getLimitPerc_W(5) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			engine.getLimitPerc_W(95) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			Stargate.getStargateStdHeight(engine.getVirtualLimit_height()), new AEColor(255,0,0,255)));
+        	gates.add(new Stargate_Pair(
+        			engine.getLimitPerc_W(15) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			engine.getLimitPerc_W(85) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			Stargate.getStargateStdHeight(engine.getVirtualLimit_height()), new AEColor(255,255,0,0)));
+        	gates.add(new Stargate_Pair(
+        			engine.getLimitPerc_W(25) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			engine.getLimitPerc_W(75) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			Stargate.getStargateStdHeight(engine.getVirtualLimit_height()), AEColor.ORANGE));
+        	gates.add(new Stargate_Pair(
+        			engine.getLimitPerc_W(35) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			engine.getLimitPerc_W(65) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			Stargate.getStargateStdHeight(engine.getVirtualLimit_height()), new AEColor(255,255,0)));
+        	gates.add(new Stargate_Pair(
+        			engine.getLimitPerc_W(45) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			engine.getLimitPerc_W(55) - Stargate.getStargateStdWidth(Stargate.getStargateStdHeight(engine.getVirtualLimit_height()))/2, engine.getVirtualLimit_height() - Stargate.getStargateStdHeight(engine.getVirtualLimit_height()),
+        			Stargate.getStargateStdHeight(engine.getVirtualLimit_height()), new AEColor(0,255,0)));
     	} else if(map==7) {
         	mapParticles.add(new MapParticle(engine.getLimitPerc_W(20	)-engine.getLimitPerc_W(15)/2, engine.getLimitPerc_H(10	) - (engine.getLimitPerc_W(10)/10)/2, 0, 0, 0, 0, engine.getLimitPerc_W(15), engine.getLimitPerc_W(10)/10, AnimationObject.RECT, new AEColor(255,255,255,255)));
         	mapParticles.add(new MapParticle(engine.getLimitPerc_W(80	)-engine.getLimitPerc_W(15)/2, engine.getLimitPerc_H(10	) - (engine.getLimitPerc_W(10)/10)/2, 0, 0, 0, 0, engine.getLimitPerc_W(15), engine.getLimitPerc_W(10)/10, AnimationObject.RECT, new AEColor(255,255,255,255)));

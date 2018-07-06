@@ -7,8 +7,13 @@ import jokrey.utilities.animation.util.AEColor;
 import jokrey.utilities.animation.util.AERect;
 import jokrey.utilities.animation.util.AESize;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class Weapon extends AnimationObject {
 	public Player weaponHolder = null;
+
 	public Weapon(int w, int h) {
 		super(new AERect(0,0,w,h), OVAL);
 	}
@@ -22,10 +27,10 @@ public abstract class Weapon extends AnimationObject {
 	public abstract void drawWeap(AnimationPipeline drawer);
 	public abstract String getName();
 	public abstract double getDamage();
-	public abstract double getDelay();
 	public abstract double getBlowbackMultipler();
 	public abstract void updatePosition();
 	public void intersectsWith(AnimationObject p){}
+	public abstract double getDelay();
 	@Override public boolean equals(Object o) {
 		if(o instanceof Weapon) {
 			Weapon wo=(Weapon)o;
@@ -34,28 +39,42 @@ public abstract class Weapon extends AnimationObject {
 			return super.equals(o);
 	}
 
+	@Override public String toString() {
+		return getName();
+	}
+
+	private long lastShot = System.nanoTime();
+	public void used() {
+		lastShot=System.nanoTime();
+	}
+	public boolean isInCooldown() {
+		return (System.nanoTime()-lastShot)/1e9 < getDelay();
+	}
 
 
 	public static Weapon getWeaponRandom(AESize frameSize) {
-		int randomNumber = UTIL.getRandomNr(0,15);
-		switch(randomNumber) {
-			case(0): return AnimatedCloseCombatWeapon.getKnife();
-			case(1): return AnimatedCloseCombatWeapon.getForceLightening(frameSize);
-			case(2): return AnimatedCloseCombatWeapon.getLightsaber(AEColor.getRandomColor());
-			case(3): return RangedWeapon.getWeapon_BLASTER(frameSize);
-			case(4): return RangedWeapon.getWeapon_Flamethrower(frameSize);
-			case(5): return RangedWeapon.getWeapon_FORCE_PUSH(frameSize);
-			case(6): return RangedWeapon.getWeapon_Grenade(frameSize);
-			case(7): return RangedWeapon.getWeapon_JAFFA_STAFF(frameSize);
-			case(8): return RangedWeapon.getWeapon_Mine(frameSize);
-			case(9): return RangedWeapon.getWeapon_PISTOL(frameSize);
-			case(10): return RangedWeapon.getWeapon_PlasmaGun(UTIL.getRandomNr(10,44));
-			case(11): return RangedWeapon.getWeapon_RIFLE(frameSize);
-			case(12): return RangedWeapon.getWeapon_SHOTGUN(frameSize);
-			case(13): return RangedWeapon.getWeapon_SMG(frameSize);
-			case(14): return RangedWeapon.getWeapon_SNIPER(frameSize);
-			case(15): return RangedWeapon.getWeapon_ZAT_NIK_TEL(frameSize);
-		}
-		return RangedWeapon.getWeapon_RIFLE(frameSize);
+	    List<Weapon> list = getHierarchicalWeaponList(frameSize);
+		int randomNumber = UTIL.getRandomNr(0,list.size()-1);
+		return list.get(randomNumber);
 	}
+	public static List<Weapon> getHierarchicalWeaponList(AESize frameSize) {
+	    return Arrays.asList(
+	            RangedWeapon.getWeapon_SNIPER(frameSize),
+                AnimatedCloseCombatWeapon.getLightsaber(AEColor.getRandomColor()),
+                RangedWeapon.getWeapon_SHOTGUN(frameSize),
+                RangedWeapon.getWeapon_RIFLE(frameSize),
+                RangedWeapon.getWeapon_JAFFA_STAFF(frameSize),
+                RangedWeapon.getWeapon_BLASTER(frameSize),
+                RangedWeapon.getWeapon_SMG(frameSize),
+                RangedWeapon.getWeapon_Mine(frameSize),
+                RangedWeapon.getWeapon_Flamethrower(frameSize),
+                RangedWeapon.getWeapon_PISTOL(frameSize),
+                AnimatedCloseCombatWeapon.getForceLightening(frameSize),
+                RangedWeapon.getWeapon_Grenade(frameSize),
+                RangedWeapon.getWeapon_PlasmaGun(UTIL.getRandomNr(10,44)),
+                RangedWeapon.getWeapon_ZAT_NIK_TEL(frameSize),
+                AnimatedCloseCombatWeapon.getKnife(),
+                RangedWeapon.getWeapon_FORCE_PUSH(frameSize)
+            );
+    }
 }

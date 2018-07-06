@@ -1,5 +1,6 @@
 package jokrey.game.realistic_game;
 
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import util.UTIL;
 import util.UTIL_2D;
 import jokrey.utilities.animation.engine.LimitRangeMovingAnimationObject;
@@ -26,7 +27,11 @@ public abstract class RangedWeapon extends Weapon {
 	public abstract double getShotGrav();
 	public abstract AEColor getShotClr();
 	public abstract int getInitAmmo();
-	public abstract AEPoint getShotInitLocation();
+	public abstract AEPoint getShotInitLocation(boolean player_looking_left);
+
+	public AEPoint getShotInitLocation() {
+	    return getShotInitLocation(weaponHolder.lookingLeft);
+    }
 
 	public boolean needsAmmo() {
 		return getInitAmmo()>=0&&amunition<=0;
@@ -37,12 +42,11 @@ public abstract class RangedWeapon extends Weapon {
 		AEPoint p = getShotInitLocation();
 		p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
 		p.y+=weaponHolder.isLookingLeft()?-sS.getHeight()/2:sS.getHeight()/2;
-		return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler());
+		return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder);
 	}
-	double lastShot = System.nanoTime()/1e9;
 	boolean shoot(ArrayList<Shot> shots) {
-		if(needsAmmo() || weaponHolder==null || System.nanoTime()/1e9-lastShot<getDelay())return false;
-		lastShot=System.nanoTime()/1e9;
+		if(needsAmmo() || weaponHolder==null || isInCooldown())return false;
+		used();
 		shots.add(getShot());
 		amunition--;
 		return true;
@@ -53,7 +57,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(17, 5) {
 			AEColor plasmaClr = AEColor.getRandomColor();
 			@Override public int getInitAmmo() {return -1;}
-			@Override public String getName() {return "PlasmaGun_"+damage;}
+			@Override public String getName() {return "PlasmaGun";}
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
         		pipe.getDrawer().fillOval(plasmaClr, drawWeapRect/*new AERect(drawWeapRect.x, drawWeapRect.y, drawWeapRect.getW()/2, drawWeapRect.getH()/2)*/);
@@ -62,9 +66,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-getW():weaponHolder.getW()));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return (int) (5.0/damage * 500.0);}
 			@Override public AESize getShotSize() {return new AESize(damage/2,damage/2);}
@@ -98,9 +102,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-getW():weaponHolder.getW()));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()+getH()/2));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()+getH()/2));
 			}
 			@Override public double getShotSpeed() {return 500;}
 			@Override public AESize getShotSize() {return new AESize(4,4);}
@@ -134,9 +138,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.2):weaponHolder.getW()-getW()*0.2));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()+getH()/2));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()+getH()/2));
 			}
 			@Override public double getShotSpeed() {return 555;}
 			@Override public AESize getShotSize() {return new AESize(12,4);}
@@ -171,9 +175,9 @@ public abstract class RangedWeapon extends Weapon {
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()+2):weaponHolder.getW()+2));
         		drawParam=weaponHolder.drawParam;
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0-2:getW()+2)), (int)(getY()+getH()/2));
+				return new AEPoint((int)(getX()+(player_looking_left?0-2:getW()+2)), (int)(getY()+getH()/2));
 			}
 			@Override public double getShotSpeed() {return 555;}
 			@Override public AESize getShotSize() {return new AESize(15,15*3);}
@@ -189,7 +193,7 @@ public abstract class RangedWeapon extends Weapon {
 				p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
 //				p.y+=weaponHolder.lookingLeft?-sS.getH()/2:sS.getH()/2;
 				p.y-=5;
-				return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler()) {
+				return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder) {
 					{
         				drawParam=new AnimationObjectDrawer() {
 							@Override public boolean canDraw(AnimationObject o, Object param) { return true; }
@@ -230,16 +234,16 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.2):weaponHolder.getW()-getW()*0.2));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()+getH()/2));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()+getH()/2));
 			}
 			@Override public double getShotSpeed() {return 567;}
 			@Override public AESize getShotSize() {return new AESize(8,4);}
 			@Override public AEColor getShotClr() {return new AEColor(255,229, 189, 27);}
 			@Override public int getRecoil() {return 44;}
 			@Override public double getShotGrav() {return 1;}
-			@Override public double getDelay() {return 0.5;}
+			@Override public double getDelay() {return 0.3;}
 			@Override public double getDamage() {return 18;}
 			@Override public double getBlowbackMultipler() {return 0.2;}
 		};
@@ -266,9 +270,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.3):weaponHolder.getW()-getW()*0.3));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()+getH()/2));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()+getH()/2));
 			}
 			@Override public double getShotSpeed() {return 999;}
 			@Override public AESize getShotSize() {return new AESize(11,6);}
@@ -300,9 +304,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()):weaponHolder.getW()));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return 555;}
 			@Override public AESize getShotSize() {return new AESize(4,4);}
@@ -336,9 +340,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.3):weaponHolder.getW()-getW()*0.3));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return 333;}
 			@Override public AESize getShotSize() {return new AESize(5,4);}
@@ -349,8 +353,8 @@ public abstract class RangedWeapon extends Weapon {
 			@Override public double getDamage() {return 8;}
 			@Override public double getBlowbackMultipler() {return 0.3;}
 			@Override public boolean shoot(ArrayList<Shot> shots) {
-				if(needsAmmo() || weaponHolder==null || System.nanoTime()/1e9-lastShot<getDelay())return false;
-				lastShot=System.nanoTime()/1e9;
+				if(needsAmmo() || weaponHolder==null || isInCooldown())return false;
+				used();
 				ArrayList<Shot> shotsToAdd = new ArrayList<>();
 				int vy_deviation = -25;
 				for(int i=0;i<8;i++) {
@@ -387,9 +391,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getMidAsPoint().x-getW()/2 + (weaponHolder.isLookingLeft()?-getW()*0.1:+getW()*0.1));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()+getH()/2));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()+getH()/2));
 			}
 			@Override public double getShotSpeed() {return 555;}
 			@Override public AESize getShotSize() {return new AESize((int)getH(),(int) (getH()/2));}
@@ -421,9 +425,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.05):weaponHolder.getW()-getW()*0.05));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return 333;}
 			@Override public AESize getShotSize() {return new AESize(27,6);}
@@ -438,29 +442,28 @@ public abstract class RangedWeapon extends Weapon {
         		AEPoint p = getShotInitLocation();
         		p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
         		p.y+=weaponHolder.isLookingLeft()?-sS.getHeight()/2:sS.getHeight()/2;
-        		Shot s = new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler()) {
-        			{
-	    				drawParam=new AnimationObjectDrawer() {
+				return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder) {
+					{
+						drawParam=new AnimationObjectDrawer() {
 							@Override public boolean canDraw(AnimationObject o, Object param) { return true; }
 							@Override public void draw(AnimationObject o, AnimationPipeline pipe, Object drawParam_g) {
 								AERect drawShotRect = pipe.getDrawBoundsFor(o);
-		        				pipe.getDrawer().drawLine(getShotClr(), new AEPoint(drawShotRect.x, drawShotRect.y+drawShotRect.getHeight()/2), new AEPoint(drawShotRect.x+drawShotRect.getWidth(), drawShotRect.y+drawShotRect.getHeight()/2));
+								pipe.getDrawer().drawLine(getShotClr(), new AEPoint(drawShotRect.x, drawShotRect.y+drawShotRect.getHeight()/2), new AEPoint(drawShotRect.x+drawShotRect.getWidth(), drawShotRect.y+drawShotRect.getHeight()/2));
 								pipe.getDrawer().drawRect(getShotClr(), new AERect(drawShotRect.x+UTIL.getRandomNr(0, drawShotRect.getWidth()), (int)(drawShotRect.y+UTIL.getRandomNr(0, drawShotRect.getHeight())), 1, 1));
 								pipe.getDrawer().drawHalfOval(getShotClr(), new AERect(drawShotRect.x, drawShotRect.y, drawShotRect.getWidth()/2, drawShotRect.getHeight()/2), 0);
 
 								pipe.getDrawer().drawHalfOval(getShotClr(), new AERect(drawShotRect.x+drawShotRect.getWidth()/2, drawShotRect.y+drawShotRect.getHeight()/2, drawShotRect.getWidth()/2, drawShotRect.getHeight()/2), 1);
 //								drawer.draw(getShotClr(), new Arc2D.Double((drawShotRect.x+drawShotRect.getW()/2), drawShotRect.y+drawShotRect.getH()/2, drawShotRect.getW()/2, drawShotRect.getH()/2, 180, 180+90, Arc2D.OPEN));
-		        			}
-	    				};
-        			}
-        			@Override public boolean hitParticle(AERect lastShotBounds, AnimationObject p_g, List<LimitRangeMovingAnimationObject> particles) {
-        				if(p_g instanceof Player) {
-        					((Player)p_g).addWearable(Wearable.getWearable_ZattedEffect());
-        				}
-        				return true;
-        			}
-        		};
-        		return s;
+							}
+						};
+					}
+					@Override public boolean hitParticle(AERect lastShotBounds, AnimationObject p_g, List<LimitRangeMovingAnimationObject> particles) {
+						if(p_g instanceof Player) {
+							((Player)p_g).addWearable(Wearable.getWearable_ZattedEffect());
+						}
+						return true;
+					}
+				};
 			}
 		};
 	}
@@ -478,9 +481,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.05):weaponHolder.getW()-getW()*0.05));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return frameSize.getHeight()*0.3;}
 			@Override public AESize getShotSize() {return new AESize((int)getW(),(int)getH());}
@@ -491,13 +494,13 @@ public abstract class RangedWeapon extends Weapon {
 			@Override public double getDamage() {return 1.6;}
 			@Override public double getBlowbackMultipler() {return 0;}
 			@Override public boolean shoot(final ArrayList<Shot> shots) {
-				if(needsAmmo() || weaponHolder==null || System.nanoTime()/1e9-lastShot<getDelay())return false;
-				lastShot=System.nanoTime()/1e9;
+				if(needsAmmo() || weaponHolder==null || isInCooldown())return false;
+				used();
         		AESize sS = getShotSize();
         		AEPoint p = getShotInitLocation();
         		p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
         		p.y+=weaponHolder.isLookingLeft()?-sS.getHeight()/2:sS.getHeight()/2;
-        		Shot s = new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler()) {
+        		Shot s = new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder) {
         			{
         				drawParam=new AnimationObjectDrawer() {
         					@Override public boolean canDraw(AnimationObject o, Object param) {return true;}
@@ -513,7 +516,7 @@ public abstract class RangedWeapon extends Weapon {
         				if(allreadyHit)return true;
         				for(int counter=0;counter<66;counter++) {
 	        		        double[] v_s = UTIL_2D.angleVelocityToXYVelocity(UTIL.getRandomNr(0, 360)-180, UTIL.getRandomNr(frameSize.getHeight()*0.05, frameSize.getHeight()*0.3));
-	        		        Shot shot = new Shot(getMid(), 0, frameSize.getHeight()*0.2, 2, 2, new AEColor(255,255,128,0), 2, 0.5) {
+	        		        Shot shot = new Shot(getMid(), 0, frameSize.getHeight()*0.2, 2, 2, new AEColor(255,255,128,0), 2, 0.5, shooter) {
 	        		        	@Override public boolean hitParticle(AERect lastShotBounds_g, AnimationObject p_g_g_g, java.util.List<LimitRangeMovingAnimationObject> particles_g) {return true;}
 	        		        };
 	        				shot.setV_X(v_s[0]);
@@ -547,9 +550,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.05):weaponHolder.getW()-getW()*0.05));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return frameSize.getHeight()*0.1;}
 			@Override public AESize getShotSize() {return new AESize((int)getW(),(int)getH());}
@@ -560,13 +563,14 @@ public abstract class RangedWeapon extends Weapon {
 			@Override public double getDamage() {return 1.333;}
 			@Override public double getBlowbackMultipler() {return 0;}
 			@Override public boolean shoot(final ArrayList<Shot> shots) {
-				if(needsAmmo() || weaponHolder==null || System.nanoTime()/1e9-lastShot<getDelay())return false;
-				lastShot=System.nanoTime()/1e9;
+				if(needsAmmo() || weaponHolder==null || isInCooldown())return false;
+				used();
         		AESize sS = getShotSize();
         		AEPoint p = getShotInitLocation();
         		p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
         		p.y+=weaponHolder.isLookingLeft()?-sS.getHeight()/2:sS.getHeight()/2;
-        		Shot s = new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler()) {
+                Realistic_Game_Engine engine = weaponHolder.engine;
+        		Shot s = new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder) {
         			{
         				drawParam=new AnimationObjectDrawer() {
         					@Override public boolean canDraw(AnimationObject o, Object param) {return true;}
@@ -584,7 +588,7 @@ public abstract class RangedWeapon extends Weapon {
         				if(p_g instanceof Player) {
 	        				for(int counter=0;counter<99;counter++) {
 		        		        double[] v_s = UTIL_2D.angleVelocityToXYVelocity(UTIL.getRandomNr(180, 360), UTIL.getRandomNr(frameSize.getHeight()*0.02, frameSize.getHeight()*0.2));
-		        		        Shot shot = new Shot(getMid(), 0, frameSize.getHeight()*0.2, 2, 2, new AEColor(255,255,128,0), 3, 0.5) {
+		        		        Shot shot = new Shot(getMid(), 0, frameSize.getHeight()*0.2, 2, 2, new AEColor(255,255,128,0), 3, 0.5, shooter) {
 		        		        	@Override public boolean hitParticle(AERect lastShotBounds_g, AnimationObject p_g_g_g, java.util.List<LimitRangeMovingAnimationObject> particles_g) {return true;}
 		        		        };
 		        				shot.setV_X(v_s[0]);
@@ -597,14 +601,14 @@ public abstract class RangedWeapon extends Weapon {
         				return false;
         			}
         			@Override public void move(int ticksPerSecond) {
-    					computeBoxStop(new AERect(weaponHolder.engine.getVirtualBoundaries()));
-    	                if(overlapingBoundsBottom(weaponHolder.engine.getVirtualLimit_height()-1)) {
+    					computeBoxStop(new AERect(engine.getVirtualBoundaries()));
+    	                if(overlapingBoundsBottom(engine.getVirtualLimit_height()-1)) {
     	    				if(getV_X()<0) 	setF_X(99);
     	    				if(getV_X()>0) 	setF_X(-99);
     	                } else								setF_X(0);
-    	                computeStops(weaponHolder.engine.mapParticles);
+    	                computeStops(engine.mapParticles);
     	                AnimationObject o;
-    	                if((o = AnimationObject.intersectsWhich(new AnimationObject(new AERect(getX(), getY(), getW(), getH()+1), AnimationObject.RECT), weaponHolder.engine.mapParticles))!=null && ((MapParticle)o).isSolid) {//important
+    	                if((o = AnimationObject.intersectsWhich(new AnimationObject(new AERect(getX(), getY(), getW(), getH()+1), AnimationObject.RECT), engine.mapParticles))!=null && ((MapParticle)o).isSolid) {//important
     	                	setV_Y(0);
     	                	if(Math.abs(getV_X())<Math.abs(((MapParticle)o).getV_X())) {
     	                		double lblVX = ((MapParticle)o).getV_X();
@@ -655,9 +659,9 @@ public abstract class RangedWeapon extends Weapon {
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()-getW()*0.2):weaponHolder.getW()-getW()*0.2));
 			}
-			@Override public AEPoint getShotInitLocation() {
+			@Override public AEPoint getShotInitLocation(boolean player_looking_left) {
 				if(weaponHolder==null)return new AEPoint();
-				return new AEPoint((int)(getX()+(weaponHolder.isLookingLeft()?0:getW())), (int)(getY()));
+				return new AEPoint((int)(getX()+(player_looking_left?0:getW())), (int)(getY()));
 			}
 			@Override public double getShotSpeed() {return frameSize.getHeight()*0.6;}
 			@Override public AESize getShotSize() {return new AESize(6, 4);}
@@ -668,8 +672,8 @@ public abstract class RangedWeapon extends Weapon {
 			@Override public double getDamage() {return 0;}
 			@Override public double getBlowbackMultipler() {return 0;}
 			@Override public boolean shoot(final ArrayList<Shot> shots) {
-				if(needsAmmo() || weaponHolder==null || System.nanoTime()/1e9-lastShot<getDelay())return false;
-				lastShot=System.nanoTime()/1e9;
+				if(needsAmmo() || weaponHolder==null || isInCooldown())return false;
+				used();
 				ArrayList<Shot> shotsToAdd = new ArrayList<>();
 				for(int i=0;i<4;i++) {
 					Shot s=getShot();
@@ -685,7 +689,7 @@ public abstract class RangedWeapon extends Weapon {
 				AEPoint p = getShotInitLocation();
 				p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
 				p.y+=weaponHolder.isLookingLeft()?-sS.getHeight()/2:sS.getHeight()/2;
-				return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler()) {
+				return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder) {
 					@Override public boolean hitParticle(AERect lastShotBounds, AnimationObject p_g, List<LimitRangeMovingAnimationObject> particles) {
 						if(p_g instanceof Player)
 							((Player)p_g).addWearable(Wearable.getWearable_BurningEffect());

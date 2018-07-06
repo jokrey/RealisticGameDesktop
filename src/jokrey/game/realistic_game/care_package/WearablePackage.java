@@ -26,4 +26,9 @@ public class WearablePackage extends CarePackage {
 			}
 		};
 	}
+
+	@Override public boolean onIntersectionWithPlayer(Player player) {
+		player.addWearable(w);
+		return true;
+	}
 }
