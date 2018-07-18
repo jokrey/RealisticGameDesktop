@@ -14,7 +14,7 @@ import jokrey.utilities.animation.util.AESize;
 public class WeaponPackage extends CarePackage {
 	public final Weapon w;
 	public WeaponPackage(Weapon w_g, AESize frameSize) {
-		super(UTIL.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), 1, 0, 0, 0, 44, (int)frameSize.getHeight()/22, (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
+		super(UTIL.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), -frameSize.getHeight()/22 + 1, 0, 0, 0, 44, (int) (frameSize.getHeight()/22), (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
 		w=w_g;
 		drawParam = new AnimationObjectDrawer() {
 			@Override public boolean canDraw(AnimationObject o, Object param) { return false; }
@@ -25,7 +25,6 @@ public class WeaponPackage extends CarePackage {
 				w.setY(getY()+getH()/2);
 				w.setX(getX()+getW()/4);
 				w.drawWeap(pipe);
-//				drawer.getDrawingUnitForParam(w, w.drawParam);
 			}
 		};
 	}

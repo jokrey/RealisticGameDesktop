@@ -16,9 +16,9 @@ public abstract class CarePackage extends MapParticle {
 
 	public abstract boolean onIntersectionWithPlayer(Player player);
 
-    @Override public boolean computeBoxStop(AERect bnds) {
+    @Override public boolean computeInsideBoxStop(AERect box) {
         if(!isSolid)return false;
-        return super.computeBoxStop(bnds);
+        return super.computeInsideBoxStop(box);
     }
 
     public void computeStops(ArrayList<? extends MovingAnimationObject> mapParticles) {

@@ -32,7 +32,7 @@ public class Stargate extends AnimationObject {
 	}
 //	public void fluktateAt(Point p, int howMuch) {
 //		if(sg_particles.size()>o.getH()*2)return;
-//		ExplosionParticle.startExplosion(sg_particles, howMuch, p, new Dimension(6,6), new Particle(o.getX()+6, o.getY()+6, o.getW()-6*2, o.getH()-6*2, OVAL), 55,
+//		ExplosionParticle.executeHitAnimation(sg_particles, howMuch, p, new Dimension(6,6), new Particle(o.getX()+6, o.getY()+6, o.getW()-6*2, o.getH()-6*2, OVAL), 55,
 //				c, c.brighter(), c.brighter(), c.brighter(), c.brighter().brighter());
 //	}
 }

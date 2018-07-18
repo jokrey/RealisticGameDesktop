@@ -3,11 +3,9 @@ package jokrey.game.realistic_game;
 import util.UTIL;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
-import jokrey.utilities.animation.util.AEColor;
 import jokrey.utilities.animation.util.AERect;
 import jokrey.utilities.animation.util.AESize;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,7 +58,7 @@ public abstract class Weapon extends AnimationObject {
 	public static List<Weapon> getHierarchicalWeaponList(AESize frameSize) {
 	    return Arrays.asList(
 	            RangedWeapon.getWeapon_SNIPER(frameSize),
-                AnimatedCloseCombatWeapon.getLightsaber(AEColor.getRandomColor()),
+                AnimatedCloseCombatWeapon.getLightsaber(),
                 RangedWeapon.getWeapon_SHOTGUN(frameSize),
                 RangedWeapon.getWeapon_RIFLE(frameSize),
                 RangedWeapon.getWeapon_JAFFA_STAFF(frameSize),

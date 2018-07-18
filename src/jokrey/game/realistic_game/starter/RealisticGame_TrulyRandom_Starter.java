@@ -25,8 +25,9 @@ public class RealisticGame_TrulyRandom_Starter {
 //                        RangedWeapon.getWeapon_PISTOL(engine.getVirtualBoundaries()));
 
         engine.setPlayer(new AEColor(255,255,255),
-                new ControlUnit_AI(),
-                        RangedWeapon.getWeapon_BLASTER(engine.getVirtualBoundaries()));
+                new ControlUnit_AI()
+                        ,RangedWeapon.getWeapon_BLASTER(engine.getVirtualBoundaries())
+        );
         engine.setPlayer(new AEColor(0,128,255),
                 new ControlUnit_AI(),
                         RangedWeapon.getWeapon_FORCE_PUSH(engine.getVirtualBoundaries()),
@@ -40,6 +41,13 @@ public class RealisticGame_TrulyRandom_Starter {
         engine.setPlayer(new AEColor(128,128,128),
                 new ControlUnit_AI(),
                 RangedWeapon.getWeapon_JAFFA_STAFF(engine.getVirtualBoundaries()));
+
+//        for(int i=0;i<100;i++) {
+//            engine.setPlayer(new AEColor(i),
+//                    new ControlUnit_AI()
+//                    ,RangedWeapon.getWeapon_PISTOL(engine.getVirtualBoundaries())
+//            );
+//        }
 
 
 		Swing_FullScreenStarter.start(engine, new RealisticGamePipeline(new AnimationDrawerSwing()));

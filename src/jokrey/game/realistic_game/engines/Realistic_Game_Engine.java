@@ -3,6 +3,7 @@ package jokrey.game.realistic_game.engines;
 import jokrey.game.realistic_game.*;
 import jokrey.game.realistic_game.care_package.*;
 import jokrey.game.realistic_game.control_units.PlayerControlUnit;
+import jokrey.utilities.animation.engine.MovingAnimationObject;
 import util.UTIL;
 import jokrey.utilities.animation.engine.LimitRangeMovingAnimationObject;
 import jokrey.utilities.animation.engine.TickEngine;
@@ -93,7 +94,8 @@ public class Realistic_Game_Engine extends TickEngine {
 		packages = new ArrayList<>();
 		shots = new ArrayList<>();
 
-    	int mapID = UTIL.getRandomNr(1, realisticGame.getMapCount());
+    	int mapID = UTIL.getRandomNr(0, realisticGame.getMapCount()-1);
+    	System.out.println(mapID);
     	realisticGame.initiateMap(mapID, this, mapParticles);
 	}
 
@@ -127,7 +129,7 @@ public class Realistic_Game_Engine extends TickEngine {
         moveAllNonPlayers(frameSize);
 
         for (Player player : getAlivePlayers()) {
-            player.computeBoxStop(frameSize);//stop player at screen block limits
+            player.computeInsideBoxStop(frameSize);
 
             for(Weapon w:player.weapons)
                 if(w instanceof RangedWeapon && ((RangedWeapon)w).amunition==0)
@@ -154,6 +156,25 @@ public class Realistic_Game_Engine extends TickEngine {
         calculateShotLogic(frameSize);
     }
 
+    private void computeAppropiateFrameStop(AERect frameSize, MovingAnimationObject thing) {
+        int maxY = (int) (frameSize.getHeight() - (int)thing.getH());
+        int maxX = (int) (frameSize.getWidth() - (int)thing.getW());
+        if (thing.getY() > maxY) {
+            thing.setY(maxY);
+            thing.setV_Y(0);
+        } else if (thing.getY() < -thing.getH()+1) {
+            thing.setY(-thing.getH()+1);
+            thing.setV_Y(0);
+        }
+        if (thing.getX() > maxX) {
+            thing.setX(maxX);
+            thing.setV_X(0);
+        } else if (thing.getX() < 0) {
+            thing.setX(0);
+            thing.setV_X(0);
+        }
+    }
+
     private void calculateCarePackageIntersections(Player player) {
         Iterator<CarePackage> packages_iter = packages.iterator();
         while(packages_iter.hasNext()) {
@@ -178,6 +199,7 @@ public class Realistic_Game_Engine extends TickEngine {
                         otherPlayer.gotHit(virtualShot);
                         player.stats.add_dealt_damage(currentWeapon.getDamage());
                         otherPlayer.stats.add_received_damage(currentWeapon.getDamage());
+                        if(otherPlayer.getLifePs()<=0)player.stats.add_kill();
                         if(currentWeapon instanceof AnimatedCloseCombatWeapon)
                             ((AnimatedCloseCombatWeapon)currentWeapon).hitParticle(otherPlayer);
                     }
@@ -278,7 +300,8 @@ public class Realistic_Game_Engine extends TickEngine {
         while(packages_iter.hasNext()) {
             CarePackage mp = packages_iter.next();
             mp.move(getTicksPerSecond());
-            mp.computeBoxStop(frameSize);
+            if(mp.isSolid)
+                computeAppropiateFrameStop(frameSize, mp);
             mp.computeStops(mapParticles);
             if(!frameSize.intersects((mp.getBounds())))
                 packages_iter.remove();

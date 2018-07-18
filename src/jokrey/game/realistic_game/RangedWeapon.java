@@ -301,6 +301,7 @@ public abstract class RangedWeapon extends Weapon {
 				}
 			}
 			@Override public void updatePosition() {
+				if(weaponHolder==null)return;
         		setY(weaponHolder.getY()+weaponHolder.getH()/2);
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()):weaponHolder.getW()));
 			}
@@ -601,7 +602,7 @@ public abstract class RangedWeapon extends Weapon {
         				return false;
         			}
         			@Override public void move(int ticksPerSecond) {
-    					computeBoxStop(new AERect(engine.getVirtualBoundaries()));
+    					computeInsideBoxStop(new AERect(engine.getVirtualBoundaries()));
     	                if(overlapingBoundsBottom(engine.getVirtualLimit_height()-1)) {
     	    				if(getV_X()<0) 	setF_X(99);
     	    				if(getV_X()>0) 	setF_X(-99);

@@ -13,7 +13,7 @@ public class HealthPackage extends CarePackage {
 	private int health = 10;
 	public int getHealth() {return health;}
 	public HealthPackage(AESize frameSize) {
-		super(UTIL.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), 1, 0, 0, 0, 44, (int)frameSize.getHeight()/22, (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
+		super(UTIL.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), -frameSize.getHeight()/22 + 1, 0, 0, 0, 44, (int)frameSize.getHeight()/22, (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
 		if(UTIL.getRandomNr(0,5)==1)
 			health=UTIL.getRandomNr(25,40);
 		else

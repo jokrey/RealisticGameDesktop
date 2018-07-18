@@ -14,22 +14,30 @@ import jokrey.utilities.animation.util.AEVector;
 import java.util.List;
 
 public class ControlUnit_AI extends PlayerControlUnit {
-	double lifePs_inLastRound = 100;
-	AEPoint lastPlayerPosition = null;
-	boolean lastIndeterminantDirectionActionWasLeft = false;
+	//HYPER-PARAMETERS
+	private static final short SIMILAR_POSITION_DISTANCE = 4;
+	private static final short NUMBER_OF_ROUNDS_POSITION_HAS_TO_BE_SIMILAR_TO_ACT = 10;
+	private static final short SHOT_EVASION_RADIUS_IN_TIMES_PLAYER_WIDTH = 14;
+
+	//RUNTIME VARIABLES - THE AI's BRAIN
+//	private double lifePs_inLastRound = 100;
+	private AEPoint lastPlayerPosition = null;
+	private boolean lastIndeterminantDirectionActionWasLeft = false;
+	private int number_of_rounds_in_which_position_is_very_similar = 0;
 	@Override public void doCalculations(Player player, Realistic_Game_Engine engine) {
 		//KI CODE:
 		//action rules:
 		//always shoot
 		//always try to land on the nearest platform
+
 		//target jump on a higher platform(basicly choose a path to get to the target) TODO not implemented
-		//evade shots TODO not implemented
 		//anticipate future player positions in order to hit TODO
 		//add Stargate logic TODO
 
 		//Add and test new wearables (jetpack)
 
-//Find a suitable Weapon(or set the target to the next ammo crate)
+
+//1 - Find a suitable Weapon(or set the target to the next ammo crate)
         boolean currentWeaponIsInCoolDownAndOtherRangedWeaponIsNot = false;
 		boolean anyRangedWeaponHasAmmo = false;
 		boolean anyRangedWeaponHasMoreDamageThanCurWeaponAndIsNotInCooldown = false;
@@ -72,26 +80,13 @@ public class ControlUnit_AI extends PlayerControlUnit {
 			}
 		}
 
-        if (player.getCurrentWeapon() instanceof RangedWeapon) {
-            if(currentWeaponIsInCoolDownAndOtherRangedWeaponIsNot || !anyRangedWeaponHasAmmo || anotherCloseCombatWeaponCouldHit ||
-                    anyRangedWeaponHasMoreDamageThanCurWeaponAndIsNotInCooldown || (anyRangedWeaponHasAmmo && ((RangedWeapon) player.getCurrentWeapon()).needsAmmo()))
-                performSwitchWeaponAction = true;
-        } else {
-            if (currentCloseCombatWeaponCouldHit) {
-                if (anotherCloseCombatWeaponCouldHitAndHasMoreDamage)
-                    performSwitchWeaponAction = true;
-            } else {
-                if (anotherCloseCombatWeaponCouldHit || anyRangedWeaponHasAmmo)
-                    performSwitchWeaponAction = true;
-            }
-        }
-
 
         if(lastPlayerPosition == null)
             lastPlayerPosition=player.getMid();
 
-//Find a target
-		MovingAnimationObject target = null;
+
+//2 - Find a target
+		AnimationObject target = null;
 		for(Player oP:engine.getAlivePlayers()) {
 			if(oP!=player) {
 				if(target==null) {
@@ -118,7 +113,8 @@ public class ControlUnit_AI extends PlayerControlUnit {
 			}
 		}
 
-		if(!hasACloseCombatWeapon && !anyRangedWeaponHasAmmo)target=null;//if player can not be hurt anyway, the enemy player is not to be pursuit
+		if(!hasACloseCombatWeapon && !anyRangedWeaponHasAmmo)
+			target=null;//if enemy can not be hurt anyway, the enemy player is not to be pursuit
 
 		if(target==null || !(anyRangedWeaponHasAmmo && hasClearHorizontalLineOfSight(player, engine, target))) {//if the enemy can be shot, that is to be preferred
     		for(CarePackage oP:engine.packages) {
@@ -131,37 +127,92 @@ public class ControlUnit_AI extends PlayerControlUnit {
     				}
     			}
     		}
-
-            if(target instanceof WeaponPackage && player.weapons.size()>=3 && !player.weapons.contains(((WeaponPackage)target).w) &&
-                    AnimationObject.intersect(player, target)) {
-                List<Weapon> hierarchical_list = Weapon.getHierarchicalWeaponList(engine.getVirtualBoundaries());
-                Weapon worstWeapon = null;
-                for(Weapon w:player.weapons)
-                    if(hierarchical_list.indexOf(w) > hierarchical_list.indexOf(worstWeapon))
-                        worstWeapon = w;
-
-    		    if(player.getCurrentWeapon().equals(worstWeapon))
-                    performDiscardWeaponAction=true;
-    		    else
-    		        performSwitchWeaponAction=true;
-            }
 		}
 
-		if(player.getLifePs()<lifePs_inLastRound)   //try to evade future damage by acting out
-		    target=null;
+		if(number_of_rounds_in_which_position_is_very_similar > NUMBER_OF_ROUNDS_POSITION_HAS_TO_BE_SIMILAR_TO_ACT)
+			target=null;
+//		if(player.getLifePs()<lifePs_inLastRound)   //try to evade future damage by acting out - replaced with shot evasion
+//		    target=null;
+        if(player.getV_Y()==0) {//standing on the floor
+            int left_right_radius = (int) (player.getW()*SHOT_EVASION_RADIUS_IN_TIMES_PLAYER_WIDTH);
 
+			AnimationObject virtualSurroundingsShot = new AnimationObject(player.getX() - left_right_radius, player.getY(), left_right_radius*2, player.getH(), AnimationObject.RECT);
+			for(Shot s:engine.shots) {
+				if(AnimationObject.intersect(s, virtualSurroundingsShot) && (
+                        (s.getV_X() > 0 && s.getMid().x < player.getMid().x)
+                        ||
+                        (s.getV_X() < 0 && s.getMid().x > player.getMid().x)
+                    )) {
+					target=null; //initiates jump
+				}
+			}
+
+
+            //virtualSurroundingsEnemyWithCCWeap
+//			AnimationObject vs_cc = new AnimationObject(player.getX() - left_right_radius, player.getY()-player.getH(), left_right_radius*2, player.getH()*3, AnimationObject.RECT);
+//			for(Player op:engine.getAlivePlayers()) {
+//				if(op.getCurrentWeapon() instanceof CloseCombatWeapon && AnimationObject.intersect(op, vs_cc)) {
+//				    if(op.getX() < player.getX() && op.getY() < player.getY()) // upper left
+//    					target=new AnimationObject(vs_cc.getX(), vs_cc.getY(), 1, 1, AnimationObject.RECT);
+//                    else if(op.getX() > player.getX() && op.getY() < player.getY()) // upper right
+//                        target=new AnimationObject(vs_cc.getX()+vs_cc.getW(), vs_cc.getY(), 1, 1, AnimationObject.RECT);
+//                    else if(op.getX() < player.getX() && op.getY() > player.getY()) // lower left
+//                        target=new AnimationObject(vs_cc.getX(), vs_cc.getY()+vs_cc.getH(), 1, 1, AnimationObject.RECT);
+//                    else if(op.getX() > player.getX() && op.getY() > player.getY()) // lower right
+//                        target=new AnimationObject(vs_cc.getX()+vs_cc.getW(), vs_cc.getY()+vs_cc.getH(), 1, 1, AnimationObject.RECT);
+//                    else
+//                        target=null;
+//				}
+//			}
+        }
+
+
+
+
+//3 - calculate key actions
+
+        //3.2 - calculate throwing away worst weapon
+        if(target instanceof WeaponPackage && player.weapons.size()>=3 && !player.weapons.contains(((WeaponPackage)target).w) &&
+                AnimationObject.intersect(player, target)) {
+            List<Weapon> hierarchical_list = Weapon.getHierarchicalWeaponList(engine.getVirtualBoundaries());
+            Weapon worstWeapon = null;
+            for(Weapon w:player.weapons)
+                if(hierarchical_list.indexOf(w) > hierarchical_list.indexOf(worstWeapon))
+                    worstWeapon = w;
+
+            if(player.getCurrentWeapon().equals(worstWeapon))
+                performDiscardWeaponAction=true;
+            else
+                performSwitchWeaponAction=true;
+        }
+
+        //3.3 - switch to best weapon
+        if (player.getCurrentWeapon() instanceof RangedWeapon) {
+            if(currentWeaponIsInCoolDownAndOtherRangedWeaponIsNot || !anyRangedWeaponHasAmmo || anotherCloseCombatWeaponCouldHit ||
+                    anyRangedWeaponHasMoreDamageThanCurWeaponAndIsNotInCooldown || (anyRangedWeaponHasAmmo && ((RangedWeapon) player.getCurrentWeapon()).needsAmmo()))
+                performSwitchWeaponAction = true;
+        } else {
+            if (currentCloseCombatWeaponCouldHit) {
+                if (anotherCloseCombatWeaponCouldHitAndHasMoreDamage)
+                    performSwitchWeaponAction = true;
+            } else {
+                if (anotherCloseCombatWeaponCouldHit || anyRangedWeaponHasAmmo)
+                    performSwitchWeaponAction = true;
+            }
+        }
+
+        //3.4 - fire and move
 		boolean clearHLineOfSightToTarget = hasClearHorizontalLineOfSight(player, engine, target);
 		if(clearHLineOfSightToTarget) {
-			if(target instanceof Player) {//anticipate future player positions in order to hit
-			    Player enemy_player = (Player) target;
+			if(target instanceof Player) {//todo anticipate future player positions in order to hit
 				if(player.getCurrentWeapon() instanceof RangedWeapon) {
-                    if(lastPlayerPosition.equals(player.getMid())) {
+                    if(number_of_rounds_in_which_position_is_very_similar > NUMBER_OF_ROUNDS_POSITION_HAS_TO_BE_SIMILAR_TO_ACT/3) {
                         lastIndeterminantDirectionActionWasLeft= !lastIndeterminantDirectionActionWasLeft;
                     }
                     AEPoint shotInit_left = ((RangedWeapon)player.getCurrentWeapon()).getShotInitLocation(true);
                     AEPoint shotInit_right = ((RangedWeapon)player.getCurrentWeapon()).getShotInitLocation(false);
-                    boolean left_action_required = shotInit_left.x > target.getX()+target.getW()+10    || target.getBounds().contains(shotInit_left);
-                    boolean right_action_required = shotInit_right.x < target.getX()-10           || target.getBounds().contains(shotInit_right);
+                    boolean left_action_required = shotInit_left.x > target.getX()+target.getW()+10/*    || target.getBounds().contains(shotInit_left)*/;
+                    boolean right_action_required = shotInit_right.x < target.getX()-10          /* || target.getBounds().contains(shotInit_right)*/;
 
                     if(left_action_required && right_action_required) {
                         performAttackAction=true;
@@ -199,22 +250,8 @@ public class ControlUnit_AI extends PlayerControlUnit {
 						performRightAction=true;
 				}
 			}
-			//TODO jump when the AnimationObject ends
-			AnimationObject testP = new AnimationObject(new AERect(player.getX()+(player.isLookingLeft()?-2:2), player.getY(), player.getW(), player.getH()), AnimationObject.RECT);
-			AnimationObject collP;
-			if((collP=AnimationObject.collidesWithOne(testP, engine.mapParticles))!=null) {
-				if(collP instanceof MapParticle && ((MapParticle)collP).isSolid) {
-					if(player.isLookingLeft()) {
-						performRightAction=true;
-						performLeftAction=false;
-					} else {
-						performLeftAction=true;
-						performRightAction=false;
-					}
-				}
-			}
 		} else {
-			if(new AnimationObject(player.getX()+2,player.getY(),2,2, AnimationObject.RECT).overlapingBoundsRight(engine.getVirtualLimit_width()))
+			if(new AnimationObject(player.getX()+player.getW()+2,player.getY(),2,2, AnimationObject.RECT).overlapingBoundsRight(engine.getVirtualLimit_width()))
 				performLeftAction=true;
 			else if(new AnimationObject(player.getX()-2,player.getY(),2,2, AnimationObject.RECT).overlapingBoundsLeft()) {
 				performRightAction=true;
@@ -253,26 +290,31 @@ public class ControlUnit_AI extends PlayerControlUnit {
 						performLeftAction=true;
 					else
 						performRightAction=true;
-					AnimationObject testP = new AnimationObject(new AERect(player.getX()+(player.isLookingLeft()?-2:2), player.getY(), player.getW(), player.getH()), AnimationObject.RECT);
-					AnimationObject collP;
-					if((collP=AnimationObject.collidesWithOne(testP, engine.mapParticles))!=null) {
-						if(collP instanceof MapParticle && ((MapParticle)collP).isSolid) {
-							if(player.isLookingLeft()) {
-								performRightAction=true;
-								performLeftAction=false;
-							} else {
-								performLeftAction=true;
-								performRightAction=false;
-							}
-						}
-					}
-					performUpAction=true;
 				}
 			}
 		}
+        //TODO jump when the AnimationObject ends
+        AnimationObject testP = new AnimationObject(new AERect(player.getX()+(player.isLookingLeft()?-2:player.getW()+2), player.getY(), player.getW(), player.getH()), AnimationObject.RECT);
+        AnimationObject collP;
+        if(target==null || (collP=AnimationObject.collidesWithOne(testP, engine.mapParticles))!=null && collP instanceof MapParticle && ((MapParticle)collP).isSolid) {
+//                if(player.isLookingLeft()) {
+//                    performRightAction=true;
+//                    performLeftAction=false;
+//                } else {
+//                    performLeftAction=true;
+//                    performRightAction=false;
+//                }
+            performUpAction=true;
+        }
 
 
-		lifePs_inLastRound=player.getLifePs();
+
+//4 - reset runtime variables
+//		lifePs_inLastRound=player.getLifePs();
+		if(player.getMid().distance(lastPlayerPosition) < SIMILAR_POSITION_DISTANCE)
+			number_of_rounds_in_which_position_is_very_similar++;
+		else
+			number_of_rounds_in_which_position_is_very_similar=0;
         lastPlayerPosition=player.getMid();
 	}
 

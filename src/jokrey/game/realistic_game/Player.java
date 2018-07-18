@@ -82,9 +82,10 @@ public class Player extends MovingAnimationObject {
 	}
 	private AEColor playerColor=null;
 	public void setPlayerColor(AEColor color) {
-		if(playerColor==null)
-			playerColor=color;
-		else
+		if(playerColor==null) {
+			playerColor = color;
+			stats.color=color;
+		} else
 		    throw new IllegalStateException("cannot be done twice");
 	}
 	public AEColor getPlayerColor() {
@@ -167,27 +168,26 @@ public class Player extends MovingAnimationObject {
     public void gotHit(Shot shot) {
 		for(Wearable w:wearables)if(w.gotHitAction(shot, engine.particles))return;
 		lifePs = getLifePs() - shot.damage;
-		shot.startExplosion(engine.particles);
+		shot.executeHitAnimation(engine.particles);
 		setV_X(getV_X() + (shot.getV_X()<0?-Math.abs(shot.getV_X())*shot.blowbackMultipler:Math.abs(shot.getV_X())*shot.blowbackMultipler));
 	}
 
 
 	public PlayerControlUnit controlUnit;
 	public void controlUnit_compute() {
-		if(controlUnit.calculateNewActions(this, engine)) {
-            if (controlUnit.isUpAction())
+		if( controlUnit.calculateNewActions(this, engine) ) {
+            if( controlUnit.isUpAction() )
                 performUpAction();
-            if (controlUnit.isLeftAction())
+            if( controlUnit.isLeftAction() )
                 performLeftAction();
-            if (controlUnit.isRightAction())
+            if( controlUnit.isRightAction() )
                 performRightAction();
-            if (controlUnit.isAttackAction())
+            if( controlUnit.isAttackAction() )
                 performAttackAction();
-            if (controlUnit.isSwitchAction())
-                switchToNextWeapon();
-            if (controlUnit.isDiscardAction()) {
+            if( controlUnit.isDiscardAction() )
                 performDiscardAction();
-            }
+			if( controlUnit.isSwitchAction() )
+				switchToNextWeapon();
         }
 	}
 

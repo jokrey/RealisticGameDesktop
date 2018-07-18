@@ -8,6 +8,7 @@ import jokrey.utilities.animation.util.AEColor;
 import jokrey.utilities.animation.util.AERect;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 public class RealisticGamePipeline extends AnimationPipeline {
     public RealisticGamePipeline(AnimationDrawer drawer) {
@@ -25,10 +26,17 @@ public class RealisticGamePipeline extends AnimationPipeline {
             getDrawer().drawString(winStreakDisplay.streakColor, 77, new DecimalFormat("0.00").format(time_until_next_round), drawBounds.x+drawBounds.getWidth()/2, drawBounds.y+drawBounds.getHeight()/2);
         }
 
-        Player[] display = engine.getPlayers().toArray(new Player[0]);
-        for(int i=0;i<display.length;i++) {
-            if (display[i]!=null)
-                getDrawer().drawString(display[i].getPlayerColor(), display[i].stats.toString(), new AERect(((double)(i)/display.length)*drawBounds.w,0, drawBounds.w/display.length, 30));
-        }
+
+        Player[] players = engine.getPlayers().toArray(new Player[0]);
+        PlayerStats[] stats = new PlayerStats[players.length];
+        for(int i=0;i<stats.length;i++)
+            if (players[i]!=null)
+                stats[i] = players[i].stats;
+
+        Arrays.sort(stats);
+
+        int draw_count = Math.min(8,stats.length);
+        for(int i=0;i<draw_count;i++)
+            getDrawer().drawString(stats[i].color, stats[i].toString(), new AERect(((double)(i)/draw_count)*drawBounds.w,0, drawBounds.w/draw_count, 30));
     }
 }

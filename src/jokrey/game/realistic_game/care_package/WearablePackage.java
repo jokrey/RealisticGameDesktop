@@ -14,7 +14,7 @@ public class WearablePackage extends CarePackage {
 	public final Wearable w;
 	AESize frameSize;
 	public WearablePackage(Wearable w_g, AESize frameSize_g) {
-		super(UTIL.getRandomNr(0, frameSize_g.getWidth()-frameSize_g.getHeight()/22), 1, 0, 0, 0, 44, (int)frameSize_g.getHeight()/22, (int)frameSize_g.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
+		super(UTIL.getRandomNr(0, frameSize_g.getWidth()-frameSize_g.getHeight()/22), -frameSize_g.getHeight()/22 + 1, 0, 0, 0, 44, (int)frameSize_g.getHeight()/22, (int)frameSize_g.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
 		w=w_g;
 		this.frameSize=frameSize_g;
 		drawParam = new AnimationObjectDrawer() {

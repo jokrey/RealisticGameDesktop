@@ -7,6 +7,7 @@ import jokrey.utilities.animation.util.AEColor;
 import jokrey.utilities.animation.util.AEPoint;
 import jokrey.utilities.animation.util.AERect;
 import jokrey.utilities.animation.util.AESize;
+import util.UTIL;
 
 import java.util.List;
 
@@ -24,11 +25,13 @@ public class Shot extends MovingAnimationObject {
 		if(shooter==null)
 			Thread.dumpStack();
 	}
-	void startExplosion(List<LimitRangeMovingAnimationObject> particles) {
+	void executeHitAnimation(List<LimitRangeMovingAnimationObject> particles) {
 		if(drawParam instanceof AEColor) {
 			AEColor c = (AEColor) drawParam;
-			LimitRangeMovingAnimationObject.startExplosion(particles, (int)damage, getMidAsPoint(), new AESize(4,4), 
-					new AnimationObject(getMidAsPoint().x-getW()*10,getMidAsPoint().y-getW()*10,getW()*20,getW()*20,AnimationObject.OVAL), 66, c, c.brighter(), c.darker());
+
+			for (int counter=0;counter!=(int)Math.min(damage/2, 25);counter++)
+				particles.add(new LimitRangeMovingAnimationObject(getMidAsPoint(), new AnimationObject(getMidAsPoint().x-getW()*10,getMidAsPoint().y-getW()*10,getW()*20,getW()*20,AnimationObject.OVAL),
+                        getV_X()/3 + UTIL.getRandomNr(-100,100), UTIL.getRandomNr(getV_Y()-100, getV_Y()+100), c));
 		}
 	}
 	/**
@@ -39,7 +42,7 @@ public class Shot extends MovingAnimationObject {
 	 * @return if the shot should be removed
 	 */
 	public boolean hitParticle(AERect aeRect, AnimationObject p, List<LimitRangeMovingAnimationObject> particles) {
-		startExplosion(particles);
+		executeHitAnimation(particles);
 		return true;
 	}
 }
