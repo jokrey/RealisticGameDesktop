@@ -42,10 +42,10 @@ public class RealisticGame_TrulyRandom_Starter {
                 new ControlUnit_AI(),
                 RangedWeapon.getWeapon_JAFFA_STAFF(engine.getVirtualBoundaries()));
 
-//        for(int i=0;i<100;i++) {
+//        for(int i=0;i<55;i++) {
 //            engine.setPlayer(new AEColor(i),
 //                    new ControlUnit_AI()
-//                    ,RangedWeapon.getWeapon_PISTOL(engine.getVirtualBoundaries())
+//                    ,RangedWeapon.getWeaponRandom(engine.getVirtualBoundaries())
 //            );
 //        }
 

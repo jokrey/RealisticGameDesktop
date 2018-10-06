@@ -4,12 +4,12 @@ import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.game.realistic_game.Player;
 
 public abstract class PlayerControlUnit {
-	private long lastMove = System.nanoTime();
-	private boolean canCalculateNewActions() {
-		return (System.nanoTime()-lastMove)/1e9>0.1;
+	private long lastTick = 0;
+	private boolean canCalculateNewActions(Realistic_Game_Engine engine) {
+		return (engine.getCurrentTick()-lastTick)>10;
 	}
 	public boolean calculateNewActions(Player player, Realistic_Game_Engine engine) {
-		if(!canCalculateNewActions())return false;
+		if(!canCalculateNewActions(engine))return false;
 		performLeftAction = false;
 		performRightAction = false;
 		performUpAction = false;
@@ -18,7 +18,7 @@ public abstract class PlayerControlUnit {
 		performDiscardWeaponAction=false;
 		doCalculations(player, engine);
 		if(performLeftAction||performRightAction||performUpAction||performAttackAction||performSwitchWeaponAction||performDiscardWeaponAction)
-			lastMove = System.nanoTime();
+			lastTick = engine.getCurrentTick();
 		return true;
 	}
 	protected abstract void doCalculations(Player player, Realistic_Game_Engine engine);

@@ -30,7 +30,7 @@ public class HealthPackage extends CarePackage {
 				pipe.getDrawer().fillOval(AEColor.RED.brighter(), new AERect(x, y, w/2, h/2));
 				pipe.getDrawer().fillOval(AEColor.RED.brighter(), new AERect(x + w/2, y, w/2, h/2));
 				pipe.getDrawer().fillOval(AEColor.RED.brighter(), new AERect(x + w/4, y + h/4, w/2, h/2));
-				pipe.getDrawer().fillTriangle(AEColor.RED.brighter(), new AERect(x,y,w,h));//TODO
+				pipe.getDrawer().fillTriangle(AEColor.RED.brighter(), new AERect(x,y,w,h));//to-do WHAT??
 			}
 		};
 	}
