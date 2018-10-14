@@ -2,7 +2,7 @@ package jokrey.game.realistic_game.care_package;
 
 import jokrey.game.realistic_game.Player;
 import jokrey.game.realistic_game.Wearable;
-import util.UTIL;
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObjectDrawer;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
@@ -14,7 +14,7 @@ public class WearablePackage extends CarePackage {
 	public final Wearable w;
 	AESize frameSize;
 	public WearablePackage(Wearable w_g, AESize frameSize_g) {
-		super(UTIL.getRandomNr(0, frameSize_g.getWidth()-frameSize_g.getHeight()/22), -frameSize_g.getHeight()/22 + 1, 0, 0, 0, 44, (int)frameSize_g.getHeight()/22, (int)frameSize_g.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
+		super(Realistic_Game_Engine.getRandomNr(0, frameSize_g.getWidth()-frameSize_g.getHeight()/22), -frameSize_g.getHeight()/22 + 1, 0, 0, 0, 44, (int)frameSize_g.getHeight()/22, (int)frameSize_g.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
 		w=w_g;
 		this.frameSize=frameSize_g;
 		drawParam = new AnimationObjectDrawer() {

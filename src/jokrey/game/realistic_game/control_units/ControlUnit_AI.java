@@ -5,8 +5,6 @@ import jokrey.game.realistic_game.care_package.CarePackage;
 import jokrey.game.realistic_game.care_package.WeaponPackage;
 import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.util.AEPoint;
-import util.UTIL;
-import jokrey.utilities.animation.engine.MovingAnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.util.AERect;
 import jokrey.utilities.animation.util.AEVector;
@@ -356,8 +354,8 @@ public class ControlUnit_AI extends PlayerControlUnit {
     		if(clearLineOfSight) {
     			for(MapParticle mp:engine.mapParticles) {
     				if(mp.isSolid && playerMid_y>=mp.getY()&&playerMid_y<=mp.getY()+mp.getH()   &&
-    						(UTIL.isBetween(mp.getMidAsPoint().x, nearesPlayer_mid_x, playerMid_x) ||
-    						UTIL.isBetween(mp.getMidAsPoint().x, playerMid_x, nearesPlayer_mid_x))) {
+    						(Realistic_Game_Engine.isBetween(mp.getMidAsPoint().x, nearesPlayer_mid_x, playerMid_x) ||
+    						Realistic_Game_Engine.isBetween(mp.getMidAsPoint().x, playerMid_x, nearesPlayer_mid_x))) {
     					clearLineOfSight=false;
     					break;
     				}
@@ -372,8 +370,8 @@ public class ControlUnit_AI extends PlayerControlUnit {
 //		if(clearLOS) {
 //			for(MapParticle mp:engine.mapParticles) {
 //				if(mp.isSolid && p!=mp && player.getMidAsPoint().x>=mp.getX()&&player.getMidAsPoint().x<=mp.getX()+mp.getW()   &&
-//						(UTIL.isBetween(mp.getMidAsPoint().y, p.getMidAsPoint().y, player.getMidAsPoint().y) ||
-//						UTIL.isBetween(mp.getMidAsPoint().y, player.getMidAsPoint().y, p.getMidAsPoint().y))) {
+//						(Realistic_Game_Engine..isBetween(mp.getMidAsPoint().y, p.getMidAsPoint().y, player.getMidAsPoint().y) ||
+//						Realistic_Game_Engine..isBetween(mp.getMidAsPoint().y, player.getMidAsPoint().y, p.getMidAsPoint().y))) {
 //					return false;
 //				}
 //			}
@@ -390,7 +388,7 @@ public class ControlUnit_AI extends PlayerControlUnit {
 		int YPHWillReach = (int) (lowest_s_y);
 		for(MapParticle mp:engine.mapParticles) {
 			boolean isAbove = player.getMidAsPoint().x>=mp.getX()&&player.getMidAsPoint().x<=mp.getX()+mp.getW() && player.getY()+player.getH() > mp.getY();
-			if(mp.isSolid && isAbove && UTIL.isBetween(mp.getY(), YPHWillReach, (player.getY()+player.getH())-2)) {
+			if(mp.isSolid && isAbove && Realistic_Game_Engine.isBetween(mp.getY(), YPHWillReach, (player.getY()+player.getH())-2)) {
 				return false;
 			}
 		}

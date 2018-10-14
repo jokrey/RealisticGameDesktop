@@ -1,8 +1,6 @@
 package jokrey.game.realistic_game;
 
 import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
-import util.UTIL;
-import util.UTIL_2D;
 import jokrey.utilities.animation.engine.LimitRangeMovingAnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObjectDrawer;
@@ -450,7 +448,7 @@ public abstract class RangedWeapon extends Weapon {
 							@Override public void draw(AnimationObject o, AnimationPipeline pipe, Object drawParam_g) {
 								AERect drawShotRect = pipe.getDrawBoundsFor(o);
 								pipe.getDrawer().drawLine(getShotClr(), new AEPoint(drawShotRect.x, drawShotRect.y+drawShotRect.getHeight()/2), new AEPoint(drawShotRect.x+drawShotRect.getWidth(), drawShotRect.y+drawShotRect.getHeight()/2));
-								pipe.getDrawer().drawRect(getShotClr(), new AERect(drawShotRect.x+UTIL.getRandomNr(0, drawShotRect.getWidth()), (int)(drawShotRect.y+UTIL.getRandomNr(0, drawShotRect.getHeight())), 1, 1));
+								pipe.getDrawer().drawRect(getShotClr(), new AERect(drawShotRect.x+Realistic_Game_Engine.getRandomNr(0, drawShotRect.getWidth()), (int)(drawShotRect.y+Realistic_Game_Engine.getRandomNr(0, drawShotRect.getHeight())), 1, 1));
 								pipe.getDrawer().drawHalfOval(getShotClr(), new AERect(drawShotRect.x, drawShotRect.y, drawShotRect.getWidth()/2, drawShotRect.getHeight()/2), 0);
 
 								pipe.getDrawer().drawHalfOval(getShotClr(), new AERect(drawShotRect.x+drawShotRect.getWidth()/2, drawShotRect.y+drawShotRect.getHeight()/2, drawShotRect.getWidth()/2, drawShotRect.getHeight()/2), 1);
@@ -516,7 +514,7 @@ public abstract class RangedWeapon extends Weapon {
         			@Override public boolean hitParticle(AERect lastShotBounds, AnimationObject p_g, List<LimitRangeMovingAnimationObject> particles) {
         				if(allreadyHit)return true;
         				for(int counter=0;counter<66;counter++) {
-	        		        double[] v_s = UTIL_2D.angleVelocityToXYVelocity(UTIL.getRandomNr(0, 360)-180, UTIL.getRandomNr(frameSize.getHeight()*0.05, frameSize.getHeight()*0.3));
+	        		        double[] v_s = Realistic_Game_Engine.angleVelocityToXYVelocity(Realistic_Game_Engine.getRandomNr(0, 360)-180, Realistic_Game_Engine.getRandomNr(frameSize.getHeight()*0.05, frameSize.getHeight()*0.3));
 	        		        Shot shot = new Shot(getMid(), 0, frameSize.getHeight()*0.2, 2, 2, new AEColor(255,255,128,0), 2, 0.5, shooter) {
 	        		        	@Override public boolean hitParticle(AERect lastShotBounds_g, AnimationObject p_g_g_g, java.util.List<LimitRangeMovingAnimationObject> particles_g) {return true;}
 	        		        };
@@ -588,7 +586,7 @@ public abstract class RangedWeapon extends Weapon {
         				if(allreadyHit)return true;
         				if(p_g instanceof Player) {
 	        				for(int counter=0;counter<99;counter++) {
-		        		        double[] v_s = UTIL_2D.angleVelocityToXYVelocity(UTIL.getRandomNr(180, 360), UTIL.getRandomNr(frameSize.getHeight()*0.02, frameSize.getHeight()*0.2));
+		        		        double[] v_s = Realistic_Game_Engine.angleVelocityToXYVelocity(Realistic_Game_Engine.getRandomNr(180, 360), Realistic_Game_Engine.getRandomNr(frameSize.getHeight()*0.02, frameSize.getHeight()*0.2));
 		        		        Shot shot = new Shot(getMid(), 0, frameSize.getHeight()*0.2, 2, 2, new AEColor(255,255,128,0), 3, 0.5, shooter) {
 		        		        	@Override public boolean hitParticle(AERect lastShotBounds_g, AnimationObject p_g_g_g, java.util.List<LimitRangeMovingAnimationObject> particles_g) {return true;}
 		        		        };
@@ -678,7 +676,7 @@ public abstract class RangedWeapon extends Weapon {
 				ArrayList<Shot> shotsToAdd = new ArrayList<>();
 				for(int i=0;i<4;i++) {
 					Shot s=getShot();
-					s.setV_Y(UTIL.getRandomNr(0, 70)-65);
+					s.setV_Y(Realistic_Game_Engine.getRandomNr(0, 70)-65);
 					shotsToAdd.add(s);
 				}
 				shots.addAll(shotsToAdd);

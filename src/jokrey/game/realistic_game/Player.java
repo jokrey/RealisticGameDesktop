@@ -4,7 +4,6 @@ import jokrey.game.realistic_game.care_package.WeaponPackage;
 import jokrey.game.realistic_game.control_units.PlayerControlUnit;
 import jokrey.game.realistic_game.engines.PlayerStats;
 import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
-import util.UTIL;
 import jokrey.utilities.animation.engine.MovingAnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
@@ -27,7 +26,14 @@ public class Player extends MovingAnimationObject {
 	private int curWeapon = 0;
 	public final ArrayList<Weapon> weapons = new ArrayList<>();
 	private void switchToNextWeapon() {
-		curWeapon = UTIL.returnIntoBounds(curWeapon+1, weapons.size());
+		int toReturn = curWeapon+1;
+		if(weapons.size()>0) {
+			while(toReturn<0)
+				toReturn += 	weapons.size();
+			while(toReturn>=weapons.size())
+				toReturn -= 	weapons.size();
+		}
+		curWeapon = toReturn;
 	}
 	public Weapon getCurrentWeapon() {
 		if(curWeapon>=0&&curWeapon<weapons.size()) {

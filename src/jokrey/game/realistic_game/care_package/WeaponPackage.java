@@ -3,7 +3,7 @@ package jokrey.game.realistic_game.care_package;
 import jokrey.game.realistic_game.Player;
 import jokrey.game.realistic_game.RangedWeapon;
 import jokrey.game.realistic_game.Weapon;
-import util.UTIL;
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObjectDrawer;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
@@ -14,7 +14,7 @@ import jokrey.utilities.animation.util.AESize;
 public class WeaponPackage extends CarePackage {
 	public final Weapon w;
 	public WeaponPackage(Weapon w_g, AESize frameSize) {
-		super(UTIL.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), -frameSize.getHeight()/22 + 1, 0, 0, 0, 44, (int) (frameSize.getHeight()/22), (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
+		super(Realistic_Game_Engine.getRandomNr(0, frameSize.getWidth()-frameSize.getHeight()/22), -frameSize.getHeight()/22 + 1, 0, 0, 0, 44, (int) (frameSize.getHeight()/22), (int)frameSize.getHeight()/22, OVAL, new AEColor(255,255,0,0).brighter());
 		w=w_g;
 		drawParam = new AnimationObjectDrawer() {
 			@Override public boolean canDraw(AnimationObject o, Object param) { return false; }

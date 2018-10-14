@@ -3,7 +3,6 @@ package jokrey.game.realistic_game.engines;
 import jokrey.game.realistic_game.*;
 import jokrey.game.realistic_game.care_package.*;
 import jokrey.game.realistic_game.engines.maps.*;
-import util.UTIL;
 
 import java.util.List;
 
@@ -14,11 +13,11 @@ public class Realistic_Stargate_Game extends Realistic_Game {
 
     @Override public double getPackageSpawnDelay() {return 4;}
     @Override public void doPackageSpawn(List<CarePackage> packages, Realistic_Game_Engine engine) {
-		int whichPack = UTIL.getRandomNr(2, 4);
+		int whichPack = Realistic_Game_Engine.getRandomNr(2, 4);
 		if(whichPack==2) {
 			packages.add(new HealthPackage(engine.getVirtualBoundaries()));
 		} else if(whichPack==3) {
-			int rand = UTIL.getRandomNr(1, 7);
+			int rand = Realistic_Game_Engine.getRandomNr(1, 7);
 			Weapon w = null;
 			if(rand==1) {
 				w = RangedWeapon.getWeapon_SMG(engine.getVirtualBoundaries());

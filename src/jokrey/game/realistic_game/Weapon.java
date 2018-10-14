@@ -1,6 +1,6 @@
 package jokrey.game.realistic_game;
 
-import util.UTIL;
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
 import jokrey.utilities.animation.util.AERect;
@@ -52,7 +52,7 @@ public abstract class Weapon extends AnimationObject {
 
 	public static Weapon getWeaponRandom(AESize frameSize) {
 	    List<Weapon> list = getHierarchicalWeaponList(frameSize);
-		int randomNumber = UTIL.getRandomNr(0,list.size()-1);
+		int randomNumber = Realistic_Game_Engine.getRandomNr(0,list.size()-1);
 		return list.get(randomNumber);
 	}
 	public static List<Weapon> getHierarchicalWeaponList(AESize frameSize) {
@@ -69,7 +69,7 @@ public abstract class Weapon extends AnimationObject {
                 RangedWeapon.getWeapon_PISTOL(frameSize),
                 AnimatedCloseCombatWeapon.getForceLightening(frameSize),
                 RangedWeapon.getWeapon_Grenade(frameSize),
-                RangedWeapon.getWeapon_PlasmaGun(UTIL.getRandomNr(10,44)),
+                RangedWeapon.getWeapon_PlasmaGun(Realistic_Game_Engine.getRandomNr(10,44)),
                 RangedWeapon.getWeapon_ZAT_NIK_TEL(frameSize),
                 AnimatedCloseCombatWeapon.getKnife(),
                 RangedWeapon.getWeapon_FORCE_PUSH(frameSize)

@@ -1,13 +1,12 @@
 package jokrey.game.realistic_game;
 
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.engine.LimitRangeMovingAnimationObject;
 import jokrey.utilities.animation.engine.MovingAnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.util.AEColor;
 import jokrey.utilities.animation.util.AEPoint;
 import jokrey.utilities.animation.util.AERect;
-import jokrey.utilities.animation.util.AESize;
-import util.UTIL;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class Shot extends MovingAnimationObject {
 
 			for (int counter=0;counter!=(int)Math.min(damage/2, 25);counter++)
 				particles.add(new LimitRangeMovingAnimationObject(getMidAsPoint(), new AnimationObject(getMidAsPoint().x-getW()*10,getMidAsPoint().y-getW()*10,getW()*20,getW()*20,AnimationObject.OVAL),
-                        getV_X()/3 + UTIL.getRandomNr(-100,100), UTIL.getRandomNr(getV_Y()-100, getV_Y()+100), c));
+                        getV_X()/3 + Realistic_Game_Engine.getRandomNr(-100,100), Realistic_Game_Engine.getRandomNr(getV_Y()-100, getV_Y()+100), c));
 		}
 	}
 	/**

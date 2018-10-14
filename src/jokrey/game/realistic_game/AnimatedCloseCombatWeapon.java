@@ -1,6 +1,6 @@
 package jokrey.game.realistic_game;
 
-import util.UTIL;
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
 import jokrey.utilities.animation.util.AEColor;
@@ -76,7 +76,7 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
 		};
     }
     public static AnimatedCloseCombatWeapon getLightsaber() {
-		int rand = UTIL.getRandomNr(0,4);
+		int rand = Realistic_Game_Engine.getRandomNr(0,4);
 		switch (rand) {
 			case 0: return getLightsaber(AEColor.RED);
 			case 1: return getLightsaber(AEColor.CYAN);
@@ -173,7 +173,7 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
 				}
 				if(isAttacking()) {
 					for(int i=0;i<5;i++)
-						pipe.getDrawer().drawOval(AEColor.GRAY, new AERect(drawWeapRect.x+UTIL.getRandomNr(0, drawWeapRect.getWidth()), drawWeapRect.y+UTIL.getRandomNr(0, drawWeapRect.getHeight()), 2, 2));
+						pipe.getDrawer().drawOval(AEColor.GRAY, new AERect(drawWeapRect.x+Realistic_Game_Engine.getRandomNr(0, drawWeapRect.getWidth()), drawWeapRect.y+Realistic_Game_Engine.getRandomNr(0, drawWeapRect.getHeight()), 2, 2));
 				}
 			}
 		};

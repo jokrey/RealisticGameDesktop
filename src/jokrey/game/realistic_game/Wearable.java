@@ -1,6 +1,6 @@
 package jokrey.game.realistic_game;
 
-import util.UTIL;
+import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
 import jokrey.utilities.animation.engine.LimitRangeMovingAnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.pipeline.AnimationPipeline;
@@ -213,7 +213,7 @@ public abstract class Wearable {
 	    	}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
 				for(int i=0;i<2;i++)//called so often it looks like much more
-					pipe.getDrawer().fillOval(AEColor.CYAN, new AERect(UTIL.getRandomNr(x-4, x+w+4), UTIL.getRandomNr(y-4, y+h+4), 4, 4));
+					pipe.getDrawer().fillOval(AEColor.CYAN, new AERect(Realistic_Game_Engine.getRandomNr(x-4, x+w+4), Realistic_Game_Engine.getRandomNr(y-4, y+h+4), 4, 4));
 			}
 		};
 	}
@@ -233,7 +233,7 @@ public abstract class Wearable {
 	    	}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
 				for(int i=0;i<2;i++)//called so often it looks like much more
-					pipe.getDrawer().fillOval(new AEColor(0,0,255), new AERect(UTIL.getRandomNr(x-4, x+w+4), UTIL.getRandomNr(y-4, y+h+4), 2, 2));
+					pipe.getDrawer().fillOval(new AEColor(0,0,255), new AERect(Realistic_Game_Engine.getRandomNr(x-4, x+w+4), Realistic_Game_Engine.getRandomNr(y-4, y+h+4), 2, 2));
 			}
 		};
 	}
@@ -262,7 +262,7 @@ public abstract class Wearable {
 	    	}
 			@Override public void drawWearable(AnimationPipeline pipe, double x, double y, double w, double h) {
 				for(int i=0;i<4;i++)//called so often it looks like more
-					pipe.getDrawer().fillOval(AEColor.ORANGE, new AERect(UTIL.getRandomNr(x-4, x+w+4), UTIL.getRandomNr(y-4, y+h+4), UTIL.getRandomNr(2, 5), UTIL.getRandomNr(2, 5)));
+					pipe.getDrawer().fillOval(AEColor.ORANGE, new AERect(Realistic_Game_Engine.getRandomNr(x-4, x+w+4), Realistic_Game_Engine.getRandomNr(y-4, y+h+4), Realistic_Game_Engine.getRandomNr(2, 5), Realistic_Game_Engine.getRandomNr(2, 5)));
 			}
 		};
 	}

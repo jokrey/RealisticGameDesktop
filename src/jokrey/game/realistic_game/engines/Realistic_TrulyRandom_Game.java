@@ -3,7 +3,6 @@ package jokrey.game.realistic_game.engines;
 import jokrey.game.realistic_game.*;
 import jokrey.game.realistic_game.care_package.*;
 import jokrey.game.realistic_game.engines.maps.*;
-import util.UTIL;
 
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class Realistic_TrulyRandom_Game extends Realistic_Game {
     }
 
     @Override public void doPackageSpawn(List<CarePackage> packages, Realistic_Game_Engine engine) {
-		int whichPack = UTIL.getRandomNr(1, 6);
+		int whichPack = Realistic_Game_Engine.getRandomNr(1, 6);
 		if(whichPack==2) {
 			packages.add(new HealthPackage(engine.getVirtualBoundaries()));
 		} else if(whichPack==3) {
@@ -41,10 +40,10 @@ public class Realistic_TrulyRandom_Game extends Realistic_Game {
 //					allPlayersHaveWeapon = false;
 //			if(!allPlayersHaveWeapon)
 				packages.add(new WeaponPackage(w, engine.getVirtualBoundaries()));
-			if(UTIL.getRandomNr(0,40) == 10)//rare
+			if(Realistic_Game_Engine.getRandomNr(0,40) == 10)//rare
 				packages.add(new TeleporterPackage(engine.getVirtualBoundaries()));
 		} else if(whichPack==4) {
-			int rand = UTIL.getRandomNr(1,4);
+			int rand = Realistic_Game_Engine.getRandomNr(1,4);
 			Wearable w = null;
 			if(rand==1) {
 				w = Wearable.getWearable_ProtectiveVest();

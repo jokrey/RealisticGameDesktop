@@ -4,7 +4,6 @@ import jokrey.game.realistic_game.*;
 import jokrey.game.realistic_game.care_package.*;
 import jokrey.game.realistic_game.control_units.PlayerControlUnit;
 import jokrey.utilities.animation.engine.MovingAnimationObject;
-import util.UTIL;
 import jokrey.utilities.animation.engine.LimitRangeMovingAnimationObject;
 import jokrey.utilities.animation.engine.TickEngine;
 import jokrey.utilities.animation.pipeline.AnimationObject;
@@ -18,7 +17,8 @@ public class Realistic_Game_Engine extends TickEngine {
 	private Realistic_Game realisticGame;
     private HashMap<AEColor, Weapon[]> players_orig_weapons = new HashMap<>();
 	private HashMap<AEColor, Player> players = new HashMap<>();
-	public Player getPlayer(AEColor color) {
+
+    public Player getPlayer(AEColor color) {
 	    return players.get(color);
     }
 	public Collection<Player> getPlayers() {
@@ -76,12 +76,12 @@ public class Realistic_Game_Engine extends TickEngine {
                     if(w instanceof RangedWeapon)
                         ((RangedWeapon)w).amunition = ((RangedWeapon)w).getInitAmmo();
                 p.setLifePs(100);
-                p.setX((int) UTIL.getRandomNr(0, getVirtualLimit_width() - p.getW()));
-                p.setY((int) UTIL.getRandomNr(0, getVirtualLimit_height() - p.getH()));
+                p.setX((int) getRandomNr(0, getVirtualLimit_width() - p.getW()));
+                p.setY((int) getRandomNr(0, getVirtualLimit_height() - p.getH()));
             }
             while(AnimationObject.intersect(p, mapParticles)) {
-                p.setX(UTIL.getRandomNr(0, getVirtualLimit_width()-p.getW()));
-                p.setY(UTIL.getRandomNr(0, getVirtualLimit_height()-p.getH()));
+                p.setX(getRandomNr(0, getVirtualLimit_width()-p.getW()));
+                p.setY(getRandomNr(0, getVirtualLimit_height()-p.getH()));
             }
         }
 	}
@@ -94,7 +94,7 @@ public class Realistic_Game_Engine extends TickEngine {
 		packages = new ArrayList<>();
 		shots = new ArrayList<>();
 
-    	int mapID = UTIL.getRandomNr(0, realisticGame.getMapCount()-1);
+    	int mapID = getRandomNr(0, realisticGame.getMapCount()-1);
     	System.out.println(mapID);
     	realisticGame.initiateMap(mapID, this, mapParticles);
 	}
@@ -345,5 +345,27 @@ public class Realistic_Game_Engine extends TickEngine {
             LimitRangeMovingAnimationObject.startExplosion(particles, 55, player.getMidAsPoint(), new AESize(4,4),
                     new AnimationObject(player.getMidAsPoint().x-100,player.getMidAsPoint().y-100,200,200,AnimationObject.OVAL), 66, new AEColor(255,255,0,0).darker(), new AEColor(255,255,0,0), new AEColor(255,255,0,0).darker().darker());
         }
+    }
+
+
+    public static boolean isBetween(double toCheck, double minor, double major) {
+        return minor<toCheck && toCheck < major;
+    }
+    public static int getRandomNr(int min, int max) {
+        int range = (max - min) + 1;
+        return (int)(Math.random() * range) + min;
+    }
+    public static double getRandomNr(double min, double max) {
+        double range = (max - min) + 1;
+        return (Math.random() * range) + min;
+    }
+    public static double[] angleVelocityToXYVelocity(double angle, double velocity) {
+        return new double[]{angleXVelocityToXVelocity(angle, velocity),angleYVelocityToYVelocity(angle, velocity)};
+    }
+    public static double angleXVelocityToXVelocity(double angle, double x_velocity) {
+        return Math.cos(Math.toRadians(angle)) * x_velocity;
+    }
+    public static double angleYVelocityToYVelocity(double angle, double y_velocity) {
+        return Math.sin(Math.toRadians(angle)) * y_velocity;
     }
 }
