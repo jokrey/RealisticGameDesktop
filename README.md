@@ -32,5 +32,5 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 * The Realistic Part or the name is meant to be a joke. A more fitting name would be:
 "Oval's shooting Oval's, with Oval's and there is light(ish) swords and teleporters maybe"
-* The entire game is written in a very hacky, "at least it works" way
+* The entire game is written in a very hacky, "at least it works" way.
 Which is honestly fine considering, but just to point out that the author is aware.
