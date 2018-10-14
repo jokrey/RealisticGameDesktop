@@ -7,7 +7,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="Util" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="module" module-name="AnimationEngine" />
   </component>

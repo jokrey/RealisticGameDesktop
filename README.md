@@ -1,15 +1,34 @@
 # RealisticGame
 
 A Desktop Implementation of a small, original 2d game.
+It is easily extendable. If you build a new cool map(extending RealisticMap) let me know.
 
-It features a rather simple minded AI, you can play against.
+### Installing
 
-Requires the "jokrey.utilities.animation" package from AnimationEngine(another repository) to build
+* Clone the repository with the 'git clone' command.
+(Additionally there are a number of dependencies on the AnimationEngine repository, so clone that into the path also)
+* Download one of the releases (functionality maybe to broad or too narrow)
 
-FYI: The Realistic Part or the name is meant to be a joke. A more fitting name would be:
+## Features
 
-"Oval's shooting Oval's, with Oval's and there is Lightsabers"
+ * A 2D jump, run and shoot environment fitting the screen
+ * Multiple Maps
+ * Multiple Weapons
+ * Teleporters
+ * PowerUp Items
+ * Armor
+ * Optionally Multiple Players
+ * Optionally a simple AI to play against (may not be able to handle every imaginable map).
 
-How to play:
-  Build this yourself.
-  Or download the app. (maybe a bit easier)
+## Usage
+
+See the [example package](src/jokrey/utililities/swing/text_editor/example) for simple, runnable examples of most use cases
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+The Realistic Part or the name is meant to be a joke. A more fitting name would be:
+"Oval's shooting Oval's, with Oval's and there is light(ish) swords and teleporters maybe"
