@@ -49,6 +49,8 @@ public class Player extends MovingAnimationObject {
 		newWear.setWearer(this);
         wearables.removeIf(wear -> wear.newWearableAddedRemoveThis(newWear));
 		wearables.add(newWear);
+        System.out.println("we = " + wearables);
+        System.out.println("newWear = " + newWear);
 	}
 	private double lifePs=Integer.MIN_VALUE; public double getLifePs() { return lifePs; }
 	public void setLifePs(double d) {
@@ -148,23 +150,22 @@ public class Player extends MovingAnimationObject {
 
 
     private void performDiscardAction() {
-	    throwAwayWeapon(getCurrentWeapon());
+	    throwAwayWeapon(getCurrentWeapon(), getStdHorizontalSpeedMax()/2, getStdHorizontalSpeedMax()*2);
     }
 
-    public void throwAwayWeapon(Weapon weapon) {
+    public void throwAwayWeapon(Weapon weapon, double speedX, double speedY) {
         if(!weapons.isEmpty() && weapons.remove(weapon)) {
-            WeaponPackage pack = new WeaponPackage(weapon, engine.getVirtualBoundaries());
-            pack.w.weaponHolder=null;
+            WeaponPackage pack = new WeaponPackage(weapon.createNew(), engine.getVirtualBoundaries());
             engine.packages.add(pack);
             pack.setY(getY());
-            pack.setV_Y(-getStdHorizontalSpeedMax()*2);
+            pack.setV_Y(-speedY);
             pack.setF_Y(getStdGravitation());
             if(isLookingLeft()) {
                 pack.setX(getX()-pack.getW()*1.1);
-                pack.setV_X(-getStdHorizontalSpeedMax()/2 + getV_X());
+                pack.setV_X(-speedX + getV_X());
             } else {
                 pack.setX(getX()+getW()+pack.getW()*0.1);
-                pack.setV_X(getStdHorizontalSpeedMax()/2 + getV_X());
+                pack.setV_X(speedX + getV_X());
             }
             switchToNextWeapon();
         }

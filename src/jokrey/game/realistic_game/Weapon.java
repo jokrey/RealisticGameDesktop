@@ -16,6 +16,8 @@ public abstract class Weapon extends AnimationObject {
 		super(new AERect(0,0,w,h), OVAL);
 	}
 
+	public abstract Weapon createNew();
+
 	public void draw(AnimationPipeline drawer) {
 		if(weaponHolder!=null) {
 			updatePosition();

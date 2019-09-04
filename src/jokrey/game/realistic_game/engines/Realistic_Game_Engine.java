@@ -15,6 +15,7 @@ import java.util.*;
 
 public class Realistic_Game_Engine extends TickEngine {
 	private Realistic_Game realisticGame;
+    private HashMap<AEColor, Wearable[]> players_orig_wearables = new HashMap<>();
     private HashMap<AEColor, Weapon[]> players_orig_weapons = new HashMap<>();
 	private HashMap<AEColor, Player> players = new HashMap<>();
 
@@ -33,7 +34,10 @@ public class Realistic_Game_Engine extends TickEngine {
 	    return list;
     }
 	private Player mainPlayer = null;
-	public void setPlayer(AEColor color, PlayerControlUnit control, Weapon... weapons) {
+    public void setPlayer(AEColor color, PlayerControlUnit control, Weapon... weapons) {
+        setPlayer(color, control, new Wearable[0], weapons);
+    }
+	public void setPlayer(AEColor color, PlayerControlUnit control, Wearable[] wearables, Weapon... weapons) {
         AESize playerSize=Player.getStdSize(getVirtualBoundaries());
         Player p = new Player((int)playerSize.getWidth(), (int)playerSize.getHeight(), this);
         p.controlUnit=control;
@@ -42,6 +46,7 @@ public class Realistic_Game_Engine extends TickEngine {
 	    if(mainPlayer==null)mainPlayer=p;
         players.put(color, p);
         players_orig_weapons.put(color, weapons);
+        players_orig_wearables.put(color, wearables);
         p.setPlayerColor(color);
     }
 	public Realistic_Game_Engine(Realistic_Game realisticGame_g) {
@@ -72,6 +77,7 @@ public class Realistic_Game_Engine extends TickEngine {
                 p.wearables.clear();
                 p.weapons.clear();
                 p.weapons.addAll(Arrays.asList(players_orig_weapons.get(key)));
+                for(Wearable w:players_orig_wearables.get(key)) p.addWearable(w);
                 for(Weapon w:p.weapons)
                     if(w instanceof RangedWeapon)
                         ((RangedWeapon)w).amunition = ((RangedWeapon)w).getInitAmmo();
@@ -133,7 +139,7 @@ public class Realistic_Game_Engine extends TickEngine {
 
             for(Weapon w:player.weapons)
                 if(w instanceof RangedWeapon && ((RangedWeapon)w).amunition==0)
-                    player.throwAwayWeapon(w);
+                    player.throwAwayWeapon(w, player.getStdHorizontalSpeedMax()/4, player.getStdHorizontalSpeedMax());
 
             //calculate restitution on screen bottom limit
             if (player.overlapingBoundsBottom(getVirtualLimit_height() - 1)) {
@@ -351,6 +357,8 @@ public class Realistic_Game_Engine extends TickEngine {
 
     private void calculateKilled(Player player) {
         if(player.getLifePs()<=0) {
+            for(Weapon w : player.weapons)
+                player.throwAwayWeapon(w, player.getStdHorizontalSpeedMax()/4, player.getStdHorizontalSpeedMax()/4);
             player.stats.add_death();
             LimitRangeMovingAnimationObject.startExplosion(particles, 55, player.getMidAsPoint(), new AESize(4,4),
                     new AnimationObject(player.getMidAsPoint().x-100,player.getMidAsPoint().y-100,200,200,AnimationObject.OVAL), 66, new AEColor(255,255,0,0).darker(), new AEColor(255,255,0,0), new AEColor(255,255,0,0).darker().darker());

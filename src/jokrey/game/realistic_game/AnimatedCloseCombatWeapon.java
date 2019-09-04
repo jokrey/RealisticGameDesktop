@@ -47,6 +47,7 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()+1):weaponHolder.getW()+1));
 			}
 			@Override public String getName() {	return "KNIFE";}
+			@Override public Weapon createNew() { return getKnife(); }
 			@Override public double getDelay() {return 0.6;}
 			@Override public double getAnimSpeed() {return 333;}
 			@Override public double getInitDamage() {return 22;}
@@ -108,6 +109,7 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
         		setX(weaponHolder.getX()+(weaponHolder.isLookingLeft()?-(getW()+2):weaponHolder.getW()+2));
 			}
 			@Override public String getName() {	return "LIGHTSABER";}
+			@Override public Weapon createNew() { return getLightsaber(lsClr); }
 			@Override public double getDelay() {return 1;}
 			@Override public double getAnimSpeed() {return 333;}
 			@Override public double getInitDamage() {return 44;}
@@ -151,6 +153,7 @@ public abstract class AnimatedCloseCombatWeapon extends CloseCombatWeapon {
 				}
 			}
 			@Override public String getName() {	return "FORCE_LIGHTENING";}
+			@Override public Weapon createNew() { return getForceLightening(frameSize); }
 			@Override public double getDelay() {return 0.01;}
 			@Override public double getAnimSpeed() {return 888;}
 			@Override public double getInitDamage() {return 0.25;}

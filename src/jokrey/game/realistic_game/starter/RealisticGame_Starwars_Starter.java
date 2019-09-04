@@ -33,18 +33,19 @@ public class RealisticGame_Starwars_Starter {
 
 		engine.setPlayer(AEColor.GREEN,
 				new ControlUnit_Human('w', 'a', 'd', 's', 'e', 'q'),
+				new Wearable[] {Wearable.getWearable_DoubleJump()},
 				AnimatedCloseCombatWeapon.getLightsaber(AEColor.GREEN),
 				RangedWeapon.getWeapon_FORCE_PUSH(engine.getVirtualBoundaries()));
-        engine.getPlayer(AEColor.GREEN).wearables.add(Wearable.getWearable_DoubleJump());
 
 		AEColor[] enemyColors = {AEColor.GRAY, new AEColor(255, 255, 255),
-                new AEColor(255, 255, 255),new AEColor(255, 255, 254),new AEColor(255, 254, 255),
-                new AEColor(255, 254, 254),new AEColor(254, 255, 255),new AEColor(254, 255, 254),
+//                new AEColor(255, 255, 255),new AEColor(255, 255, 254),new AEColor(255, 254, 255),
+//                new AEColor(255, 254, 254),new AEColor(254, 255, 255),new AEColor(254, 255, 254),
 //                new AEColor(254, 254, 255),new AEColor(254, 254, 254)
 		};
 		engine.setPlayer(enemyColors[0],
 				new ControlUnit_AI(enemyColors),
-				AnimatedCloseCombatWeapon.getLightsaber(AEColor.RED));
+				AnimatedCloseCombatWeapon.getLightsaber(AEColor.RED),
+                AnimatedCloseCombatWeapon.getForceLightening(engine.getVirtualBoundaries()));
 		for(int i=1;i<enemyColors.length;i++) {
             engine.setPlayer(enemyColors[i],
                     new ControlUnit_AI(enemyColors),

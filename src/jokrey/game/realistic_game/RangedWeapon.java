@@ -56,6 +56,7 @@ public abstract class RangedWeapon extends Weapon {
 			AEColor plasmaClr = AEColor.getRandomColor();
 			@Override public int getInitAmmo() {return -1;}
 			@Override public String getName() {return "PlasmaGun";}
+			@Override public Weapon createNew() { return getWeapon_PlasmaGun(damage); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
         		pipe.getDrawer().fillOval(plasmaClr, drawWeapRect/*new AERect(drawWeapRect.x, drawWeapRect.y, drawWeapRect.getW()/2, drawWeapRect.getH()/2)*/);
@@ -83,6 +84,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*3, h) {
 			@Override public int getInitAmmo() {return 44;}
 			@Override public String getName() {return "SMG";}
+			@Override public Weapon createNew() { return getWeapon_SMG(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int bodyH = (int) (drawWeapRect.getHeight() - drawWeapRect.getHeight()/5);
@@ -119,6 +121,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*4, h) {
 			@Override public int getInitAmmo() {return -1;}
 			@Override public String getName() {return "BLASTER";}
+			@Override public Weapon createNew() { return getWeapon_BLASTER(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int bodyH = (int) (drawWeapRect.getHeight() - drawWeapRect.getHeight()/5);
@@ -155,6 +158,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h, h) {
 			@Override public int getInitAmmo() {return -1;}
 			@Override public String getName() {return "FORCE_PUSH";}
+			@Override public Weapon createNew() { return getWeapon_FORCE_PUSH(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 //				g.setStroke(new BasicStroke(2));
@@ -177,7 +181,7 @@ public abstract class RangedWeapon extends Weapon {
 				if(weaponHolder==null)return new AEPoint();
 				return new AEPoint((int)(getX()+(player_looking_left?0-2:getW()+2)), (int)(getY()+getH()/2));
 			}
-			@Override public double getShotSpeed() {return 555;}
+			@Override public double getShotSpeed() {return 1000;}
 			@Override public AESize getShotSize() {return new AESize(15,15*3);}
 			@Override public AEColor getShotClr() {return new AEColor(255,128,128,255);}
 			@Override public int getRecoil() {return 0;}
@@ -189,7 +193,6 @@ public abstract class RangedWeapon extends Weapon {
 				AESize sS = getShotSize();
 				AEPoint p = getShotInitLocation();
 				p.x+=weaponHolder.isLookingLeft()?-sS.getWidth()/2:sS.getWidth()/2;
-//				p.y+=weaponHolder.lookingLeft?-sS.getH()/2:sS.getH()/2;
 				p.y-=5;
 				return new Shot(new AEPoint(p.x,p.y), weaponHolder.getV_X() + (weaponHolder.isLookingLeft()?-getShotSpeed():getShotSpeed()), getShotGrav(), sS.getWidth(), sS.getHeight(), getShotClr(), getDamage(), getBlowbackMultipler(), weaponHolder) {
 					{
@@ -215,6 +218,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*5, h) {
 			@Override public int getInitAmmo() {return 22;}
 			@Override public String getName() {return "RIFLE";}
+			@Override public Weapon createNew() { return getWeapon_RIFLE(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int bodyH = (int) (drawWeapRect.getHeight() - drawWeapRect.getHeight()/3);
@@ -251,6 +255,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*7, h) {
 			@Override public int getInitAmmo() {return 4;}
 			@Override public String getName() {return "SNIPER";}
+			@Override public Weapon createNew() { return getWeapon_SNIPER(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int bodyH = (int) (drawWeapRect.getHeight() - drawWeapRect.getHeight()/2);
@@ -287,6 +292,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon((int) (h*1.4), h) {
 			@Override public int getInitAmmo() {return 15;}
 			@Override public String getName() {return "PISTOL";}
+			@Override public Weapon createNew() { return getWeapon_PISTOL(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 //				g.setStroke(new BasicStroke(3));
@@ -322,6 +328,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*4, h) {
 			@Override public int getInitAmmo() {return 8;}
 			@Override public String getName() {return "SHOTGUN";}
+			@Override public Weapon createNew() { return getWeapon_SHOTGUN(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int sgBodyH = (int) (drawWeapRect.getHeight()*0.8);
@@ -373,6 +380,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*8, h) {
 			@Override public int getInitAmmo() {return -1;}
 			@Override public String getName() {return "STAFF";}
+			@Override public Weapon createNew() { return getWeapon_JAFFA_STAFF(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int bodyH = (int) (drawWeapRect.getHeight()/3);
@@ -409,6 +417,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon((int) (h*0.8), h) {
 			@Override public int getInitAmmo() {return -1;}
 			@Override public String getName() {return "ZAT";}
+			@Override public Weapon createNew() { return getWeapon_ZAT_NIK_TEL(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 //				if(drawWeapRect.getW()<=0||drawWeapRect.getH()<=0)
@@ -471,6 +480,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon((h), h) {
 			@Override public int getInitAmmo() {return 2;}
 			@Override public String getName() {return "GRENADE";}
+			@Override public Weapon createNew() { return getWeapon_Grenade(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				pipe.getDrawer().fillOval(AEColor.GRAY, new AERect(drawWeapRect.x, drawWeapRect.y+drawWeapRect.getHeight()*0.4, drawWeapRect.getWidth()-drawWeapRect.getWidth()*0.4, drawWeapRect.getHeight()-drawWeapRect.getHeight()*0.4));
@@ -540,6 +550,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h, (int) (h*0.5)) {
 			@Override public int getInitAmmo() {return 2;}
 			@Override public String getName() {return "MINE";}
+			@Override public Weapon createNew() { return getWeapon_Mine(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				pipe.getDrawer().fillHalfOval(AEColor.GRAY, new AERect(drawWeapRect.x, drawWeapRect.y, drawWeapRect.getWidth(), drawWeapRect.getHeight()*2), 1);
@@ -639,6 +650,7 @@ public abstract class RangedWeapon extends Weapon {
 		return new RangedWeapon(h*6, h) {
 			@Override public int getInitAmmo() {return 90;}
 			@Override public String getName() {return "FLAMETHROWER";}
+			@Override public Weapon createNew() { return getWeapon_Flamethrower(frameSize); }
 			@Override public void drawWeap(AnimationPipeline pipe) {
 				AERect drawWeapRect = pipe.getDrawBoundsFor(this);
 				int bodyH = (int) (drawWeapRect.getHeight() - drawWeapRect.getHeight()/3);
