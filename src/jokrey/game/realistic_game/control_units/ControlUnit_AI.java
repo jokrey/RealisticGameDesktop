@@ -4,11 +4,14 @@ import jokrey.game.realistic_game.*;
 import jokrey.game.realistic_game.care_package.CarePackage;
 import jokrey.game.realistic_game.care_package.WeaponPackage;
 import jokrey.game.realistic_game.engines.Realistic_Game_Engine;
+import jokrey.utilities.animation.util.AEColor;
 import jokrey.utilities.animation.util.AEPoint;
 import jokrey.utilities.animation.pipeline.AnimationObject;
 import jokrey.utilities.animation.util.AERect;
 import jokrey.utilities.animation.util.AEVector;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ControlUnit_AI extends PlayerControlUnit {
@@ -17,7 +20,14 @@ public class ControlUnit_AI extends PlayerControlUnit {
 	private static final short NUMBER_OF_ROUNDS_POSITION_HAS_TO_BE_SIMILAR_TO_ACT = 10;
 	private static final short SHOT_EVASION_RADIUS_IN_TIMES_PLAYER_WIDTH = 14;
 
-	//RUNTIME VARIABLES - THE AI's BRAIN
+
+
+	private final List<AEColor> friendlies;
+	public ControlUnit_AI(AEColor... friendlies) {
+		this.friendlies = Arrays.asList(friendlies);
+	}
+
+	//RUNTIME VARIABLES - THE AI's MEMORY
 //	private double lifePs_inLastRound = 100;
 	private AEPoint lastPlayerPosition = null;
 	private boolean lastIndeterminantDirectionActionWasLeft = false;
@@ -28,7 +38,7 @@ public class ControlUnit_AI extends PlayerControlUnit {
 		//always shoot
 		//always try to land on the nearest platform
 
-		//target jump on a higher platform(basicly choose a path to get to the target) TODO not implemented
+		//target jump on a higher platform(basicly choose a path to get to the target) TODO
 		//anticipate future player positions in order to hit TODO
 		//add Stargate logic TODO
 
@@ -86,7 +96,7 @@ public class ControlUnit_AI extends PlayerControlUnit {
 //2 - Find a target
 		AnimationObject target = null;
 		for(Player oP:engine.getAlivePlayers()) {
-			if(oP!=player) {
+			if(oP!=player && !friendlies.contains(oP.getPlayerColor())) {
 				if(target==null) {
 					target=oP;
 				} else {

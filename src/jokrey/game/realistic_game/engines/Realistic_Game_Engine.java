@@ -156,7 +156,7 @@ public class Realistic_Game_Engine extends TickEngine {
         calculateShotLogic(frameSize);
     }
 
-    private void computeAppropiateFrameStop(AERect frameSize, MovingAnimationObject thing) {
+    private void computeAppropriateFrameStop(AERect frameSize, MovingAnimationObject thing) {
         int maxY = (int) (frameSize.getHeight() - (int)thing.getH());
         int maxX = (int) (frameSize.getWidth() - (int)thing.getW());
         if (thing.getY() > maxY) {
@@ -301,7 +301,7 @@ public class Realistic_Game_Engine extends TickEngine {
             CarePackage mp = packages_iter.next();
             mp.move(getTicksPerSecond());
             if(mp.isSolid)
-                computeAppropiateFrameStop(frameSize, mp);
+                computeAppropriateFrameStop(frameSize, mp);
             mp.computeStops(mapParticles);
             if(!frameSize.intersects((mp.getBounds())))
                 packages_iter.remove();
@@ -321,21 +321,31 @@ public class Realistic_Game_Engine extends TickEngine {
         if(players.isEmpty()) {
             initiateEverythingButPlayers();
             initiateNotInitiatedPlayers();
-        } else if(players.size()==1) {
+        } else if(getWinners() != null) {
             if(winStreakData.wonAtTime !=0 && (System.nanoTime()- winStreakData.wonAtTime) / 1e9 > 4) {
                 initiateEverythingButPlayers();
                 initiateNotInitiatedPlayers();
             } else if(winStreakData.wonAtTime ==0) {
                 winStreakData.wonAtTime =System.nanoTime();
-                if(players.get(0).getPlayerColor().equals(winStreakData.streakColor)) {
-                    winStreakData.streakLength++;
-                } else {
-                    winStreakData.streakLength=1;
-                    winStreakData.streakColor=players.get(0).getPlayerColor();
+                for(Player winner : getWinners()) {
+                    if (winner.getPlayerColor().equals(winStreakData.streakColor)) {
+                        winStreakData.streakLength++;
+                    } else {
+                        winStreakData.streakLength = 1;
+                        winStreakData.streakColor = winner.getPlayerColor();
+                    }
+                    winner.stats.add_win();
+                    winner.stats.calc_streak(winStreakData.streakLength);
                 }
-                players.get(0).stats.add_win();
-                players.get(0).stats.calc_streak(winStreakData.streakLength);
             }
+        }
+    }
+
+    protected Player[] getWinners() {
+        if(getAlivePlayers().size()==1) {
+            return new Player[] {getAlivePlayers().get(0)};
+        } else {
+            return null;
         }
     }
 
