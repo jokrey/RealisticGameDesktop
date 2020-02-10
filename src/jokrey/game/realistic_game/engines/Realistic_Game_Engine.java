@@ -127,7 +127,7 @@ public class Realistic_Game_Engine extends TickEngine {
     public ArrayList<CarePackage> packages;
     public ArrayList<Shot> shots;
     private double lastPackageSpawn = System.nanoTime()/1e9;
-    @Override protected void calculateTick() {
+    @Override protected void calculateTickImpl() {
     	AERect frameSize = new AERect(getVirtualBoundaries());
         calculateRoundOver();
         calculateCarePackageSpawn();
