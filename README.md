@@ -6,7 +6,7 @@ It is easily extendable. If you build a new cool map(extending RealisticMap) let
 ### Installing
 
 * Clone the repository with the 'git clone' command.
-(Additionally there are a number of dependencies on the AnimationEngine repository, so clone that into the path also)
+(Additionally, there are a number of dependencies on the AnimationEngine repository, so clone that into the path also)
 * Download one of the releases (functionality maybe to broad or too narrow)
 
 ## Features
